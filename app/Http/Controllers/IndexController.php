@@ -10,7 +10,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Requests\LogInPostRequest;
-use Illuminate\Support\Facades\DB;
 use \App\Http\Services\AccountService;
 
 class IndexController extends Controller {
