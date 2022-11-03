@@ -28,13 +28,13 @@ class IndexController extends Controller {
         return view('index');
     }
 
-    public function LogIn(LogInPostRequest $request) {
-
+    public function LogIn(LogInPostRequest $request) : array
+    {
         return $this->AccountService->LogIn($request);
     }
 
-    public function LogOut(Request $request) {
-
+    public function LogOut(Request $request) : array
+    {
         session()->flush();
 
         return array('status' => true,);

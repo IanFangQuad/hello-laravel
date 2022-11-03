@@ -14,7 +14,7 @@
 
 <body>
     <div class="container">
-        <div class="col d-flex justify-content-center">
+        <div class="col d-flex justify-content-center m-5">
             <span class="h3">login success</span>
         </div>
         <div class="col d-flex justify-content-end">
