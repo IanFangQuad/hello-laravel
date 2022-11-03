@@ -9,14 +9,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use \App\Http\Requests\LogInPostRequest;
 use Illuminate\Support\Facades\DB;
+use \App\Http\Services\AccountService;
 
 class IndexController extends Controller {
 
-    public $Request;
+    private $AccountService;
 
-    public function __construct() {
-
+    public function __construct(AccountService $AccountService) {
+        $this->AccountService = $AccountService;
     }
 
     public function Index(Request $request) {
@@ -26,25 +28,9 @@ class IndexController extends Controller {
         return view('index');
     }
 
-    public function LogIn(Request $request) {
+    public function LogIn(LogInPostRequest $request) {
 
-        if(!$request->has(['email', 'password'])){
-            return array('status' => false, 'msg' => 'please input email/password.');
-        }
-
-        $email = $request->email;
-        $password = md5($request->password);
-        $user = DB::table('member')->where('email', $email)->get();
-        if(!$user->count()){
-            return array('status' => false, 'msg' => 'this email does not exist.');
-        }
-        if(!($user->first()->password === $password)){
-            return array('status' => false, 'msg' => 'wrong password.');
-        }
-
-        session(['userID' => $user->first()->id,'email' => $user->first()->email,]);
-
-        return array('status' => true,);
+        return $this->AccountService->LogIn($request);
     }
 
     public function LogOut(Request $request) {

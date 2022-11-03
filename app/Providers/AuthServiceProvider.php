@@ -34,6 +34,5 @@ class AuthServiceProvider extends ServiceProvider
             $id = $request->session()->get('userID');
             return \App\Models\Member::where('id', $id)->first();
         });
-        //
     }
 }
