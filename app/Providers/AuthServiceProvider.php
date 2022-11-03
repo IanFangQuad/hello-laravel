@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Auth::viaRequest('login', function ($request) {
+
+            if (!$request->session()->get('userID')) {
+                return null;
+            }
+            $id = $request->session()->get('userID');
+            return \App\Models\Member::where('id', $id)->first();
+        });
         //
     }
 }

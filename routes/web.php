@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IndexController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::match(['get'], '/', [IndexController::class, 'Index'])->name('Index');
+Route::match(['post'], '/LogIn', [IndexController::class, 'LogIn']);
+Route::match(['post'], '/LogOut', [IndexController::class, 'LogOut']);
