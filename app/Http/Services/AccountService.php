@@ -22,8 +22,9 @@ class AccountService  {
 
     public function LogIn(Request $request) : array
     {
-        $email = $request->email;
-        $password = md5($request->password);
+        $validated = $request->validated();
+        $email = $validated['email'];
+        $password = md5($validated['password']);
 
         $where = array(['email', '=', $email]);
         $user = $this->Member->findMember($where);
