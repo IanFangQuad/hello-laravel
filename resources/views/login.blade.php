@@ -34,9 +34,18 @@
 <script>
     $(function() {
         $("#btn-login").on("click", function() {
+
+            $("#error-msg").text('');
+
             if(!$("#email").val() || !$("#password").val()){
                 return $("#error-msg").text('please input email/password.');
             }
+
+            const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if(!emailRegex.test($("#email").val())){
+                return $("#error-msg").text('invalid email address.');
+            }
+
             const form = $("#form-login")[0];
             const formdata = new FormData(form);
             const login = new Promise((res, rej) => {
