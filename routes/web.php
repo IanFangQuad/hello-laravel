@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,4 @@ use App\Http\Controllers\IndexController;
 Route::match(['get'], '/', [IndexController::class, 'Index'])->name('Index');
 Route::match(['post'], '/LogIn', [IndexController::class, 'LogIn']);
 Route::match(['post'], '/LogOut', [IndexController::class, 'LogOut']);
+Route::match(['get'], '/user/{userID}', [UserController::class, 'Get'])->middleware('auth:login');

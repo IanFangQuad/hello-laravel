@@ -37,7 +37,7 @@ class AccountService  {
             return array('status' => false, 'msg' => 'wrong password.');
         }
 
-        session(['userID' => $user->first()->id,'email' => $user->first()->email,]);
+        session(['userID' => $user->first()->id, 'email' => $user->first()->email, 'name' => $user->first()->name,]);
 
         return array('status' => true,);
     }

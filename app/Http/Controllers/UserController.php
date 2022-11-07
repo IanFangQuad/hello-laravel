@@ -11,38 +11,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Requests\LogInPostRequest;
 use \App\Http\Services\AccountService;
+use \App\Models\Member;
 
-class IndexController extends Controller
+
+class UserController extends Controller
 {
 
     private $AccountService;
+    private $Member;
 
-    public function __construct(AccountService $AccountService)
+    public function __construct(AccountService $AccountService, Member $Member,)
     {
         $this->AccountService = $AccountService;
+        $this->Member = $Member;
     }
 
-    public function Index(Request $request)
+    public function Get(Request $request, $userID)
     {
         if (!$request->session()->has('userID')) {
             return view('login');
         }
 
         $userName = session('name');
-        $userID = session('userID');
+        $email = session('email');
 
-        return view('index', ['name' => $userName, 'userID' => $userID,]);
+        return view('userInfo', ['name' => $userName, 'email' => $email,]);
     }
 
-    public function LogIn(LogInPostRequest $request): array
-    {
-        return $this->AccountService->LogIn($request);
-    }
-
-    public function LogOut(Request $request): array
-    {
-        session()->flush();
-
-        return array('status' => true);
-    }
 }

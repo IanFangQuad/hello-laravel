@@ -15,7 +15,7 @@
 <body>
     <div class="container">
         <div class="col d-flex justify-content-center m-5">
-            <span class="h3">login success</span>
+            <span class="h3">hello, <a href="/user/{{ $userID }}">{{ $name }}</a>.</span>
         </div>
         <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-primary" id="btn-logout">log out</button>
