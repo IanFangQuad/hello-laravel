@@ -9,9 +9,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Http\Requests\LogInPostRequest;
 use \App\Http\Services\AccountService;
-use \App\Models\Member;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -21,13 +19,12 @@ class UserController extends Controller
     private $accountService;
     private $member;
 
-    public function __construct(AccountService $accountService, Member $member,)
+    public function __construct(AccountService $accountService)
     {
         $this->AccountService = $accountService;
-        $this->Member = $member;
     }
 
-    public function Get(Request $request, $id)
+    public function get(Request $request, $id)
     {
 
         $userName = Auth::user()->name;

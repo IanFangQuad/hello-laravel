@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', [IndexController::class, 'Index'])->name('Index');
-Route::post('/LogIn', [IndexController::class, 'LogIn']);
-Route::post('/LogOut', [IndexController::class, 'LogOut']);
-Route::get('/user/{id}', [UserController::class, 'Get'])->middleware('auth');
+Route::get('/', [IndexController::class, 'index'])->name('index');
+Route::post('/logIn', [IndexController::class, 'logIn']);
+Route::post('/logOut', [IndexController::class, 'logOut']);
+Route::get('/user/{id}', [UserController::class, 'get'])->middleware('auth');

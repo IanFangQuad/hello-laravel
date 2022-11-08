@@ -51,7 +51,7 @@
             const login = new Promise((res, rej) => {
                 $.ajax({
                     type: "POST",
-                    url: "/LogIn",
+                    url: "/logIn",
                     dataType: "json",
                     contentType: false, //required
                     processData: false, // required

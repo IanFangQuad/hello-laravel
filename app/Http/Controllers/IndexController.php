@@ -23,7 +23,7 @@ class IndexController extends Controller
         $this->AccountService = $accountService;
     }
 
-    public function Index(Request $request)
+    public function index(Request $request)
     {
         if (!Auth::check()) {
             return view('login');
@@ -36,12 +36,12 @@ class IndexController extends Controller
         return view('index', ['name' => $userName, 'id' => $id, 'email' => $email]);
     }
 
-    public function LogIn(LogInPostRequest $request): array
+    public function logIn(LogInPostRequest $request): array
     {
         return $this->AccountService->LogIn($request);
     }
 
-    public function LogOut(Request $request)
+    public function logOut(Request $request)
     {
         Auth::logout();
 

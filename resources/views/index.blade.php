@@ -28,7 +28,7 @@
             const logout = new Promise((res, rej) => {
                 $.ajax({
                     type: "POST",
-                    url: "/LogOut",
+                    url: "/logOut",
                     dataType: "json",
                     success: function(response) {
                         res(response);
