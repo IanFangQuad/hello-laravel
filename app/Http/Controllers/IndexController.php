@@ -41,9 +41,13 @@ class IndexController extends Controller
         return $this->AccountService->LogIn($request);
     }
 
-    public function LogOut(Request $request): array
+    public function LogOut(Request $request)
     {
-        session()->flush();
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
 
         return array('status' => true);
     }
