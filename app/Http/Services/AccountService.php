@@ -41,7 +41,7 @@ class AccountService
         $status = $this->MemberRepository->create($formData);
 
         if (!$status) {
-            return redirect()->back()->with('msg', 'register fail, please try again');
+            throw ValidationException::withMessages(['register fail, please try again']);
         }
 
         return redirect()->back()->with('msg', 'register success');
