@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ use App\Http\Controllers\UserController;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
-Route::match(['get'], '/', [IndexController::class, 'Index'])->name('Index');
-Route::match(['post'], '/LogIn', [IndexController::class, 'LogIn']);
-Route::match(['post'], '/LogOut', [IndexController::class, 'LogOut']);
-Route::match(['get'], '/user/{userID}', [UserController::class, 'Get'])->middleware('auth:login');
+Route::get('/', [IndexController::class, 'Index'])->name('Index');
+Route::post('/LogIn', [IndexController::class, 'LogIn']);
+Route::post('/LogOut', [IndexController::class, 'LogOut']);
+Route::get('/user/{id}', [UserController::class, 'Get'])->middleware('auth');

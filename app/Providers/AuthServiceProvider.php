@@ -26,13 +26,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Auth::viaRequest('login', function ($request) {
+        // Auth::viaRequest('login', function ($request) {
 
-            if (!$request->session()->get('userID')) {
-                return null;
-            }
-            $id = $request->session()->get('userID');
-            return \App\Models\Member::where('id', $id)->first();
-        });
+        //     if (!$request->session()->get('userID')) {
+        //         return null;
+        //     }
+        //     $id = $request->session()->get('userID');
+        //     return \App\Models\Member::where('id', $id)->first();
+        // });
     }
 }

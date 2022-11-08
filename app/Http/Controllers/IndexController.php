@@ -9,29 +9,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use \App\Http\Requests\LogInPostRequest;
 use \App\Http\Services\AccountService;
 
 class IndexController extends Controller
 {
 
-    private $AccountService;
+    private $accountService;
 
-    public function __construct(AccountService $AccountService)
+    public function __construct(AccountService $accountService)
     {
-        $this->AccountService = $AccountService;
+        $this->AccountService = $accountService;
     }
 
     public function Index(Request $request)
     {
-        if (!$request->session()->has('userID')) {
+        if (!Auth::check()) {
             return view('login');
         }
 
-        $userName = session('name');
-        $userID = session('userID');
+        $userName = Auth::user()->name;
+        $email = Auth::user()->email;
+        $id = Auth::user()->id;
 
-        return view('index', ['name' => $userName, 'userID' => $userID,]);
+        return view('index', ['name' => $userName, 'id' => $id, 'email' => $email]);
     }
 
     public function LogIn(LogInPostRequest $request): array

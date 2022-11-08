@@ -12,28 +12,26 @@ use Illuminate\Http\Request;
 use \App\Http\Requests\LogInPostRequest;
 use \App\Http\Services\AccountService;
 use \App\Models\Member;
+use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
 {
 
-    private $AccountService;
-    private $Member;
+    private $accountService;
+    private $member;
 
-    public function __construct(AccountService $AccountService, Member $Member,)
+    public function __construct(AccountService $accountService, Member $member,)
     {
-        $this->AccountService = $AccountService;
-        $this->Member = $Member;
+        $this->AccountService = $accountService;
+        $this->Member = $member;
     }
 
-    public function Get(Request $request, $userID)
+    public function Get(Request $request, $id)
     {
-        if (!$request->session()->has('userID')) {
-            return view('login');
-        }
 
-        $userName = session('name');
-        $email = session('email');
+        $userName = Auth::user()->name;
+        $email = Auth::user()->email;
 
         return view('userInfo', ['name' => $userName, 'email' => $email,]);
     }

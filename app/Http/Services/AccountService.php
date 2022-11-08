@@ -10,35 +10,24 @@ namespace App\Http\Services;
 
 use Illuminate\Http\Request;
 use \App\Models\Member;
+use Illuminate\Support\Facades\Auth;
 
 class AccountService  {
 
-    private $Member;
+    private $member;
 
-    public function __construct(Member $Member,)
+    public function __construct(Member $member,)
     {
-        $this->Member = $Member;
+        $this->Member = $member;
     }
 
     public function LogIn(Request $request) : array
     {
         $validated = $request->validated();
         $email = $validated['email'];
-        $password = md5($validated['password']);
+        $password = $validated['password'];
+        $status = Auth::attempt(['email' => $email, 'password' => $password]);
 
-        $where = array(['email', '=', $email]);
-        $user = $this->Member->findMember($where);
-
-        if(!$user->count()){
-            return array('status' => false, 'msg' => 'this email does not exist.');
-        }
-
-        if(!($user->first()->password === $password)){
-            return array('status' => false, 'msg' => 'wrong password.');
-        }
-
-        session(['userID' => $user->first()->id, 'email' => $user->first()->email, 'name' => $user->first()->name,]);
-
-        return array('status' => true,);
+        return array('status' => $status,);
     }
 }

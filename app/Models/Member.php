@@ -16,14 +16,13 @@ class Member extends Authenticatable {
     //指定資料表名稱
     protected $table = 'member';
     protected $primaryKey = 'id';
-//    protected $fillable = ['MemEmail', 'MemPwd', 'MemIdentity', 'MemName', 'MemCompanyName', 'MemPhone'];
+    //protected $fillable = ['name', 'password', 'email',];
     //所有欄位可以批量更新
     protected $guarded = [];
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 
-    public function findMember(array $whereClause) : Collection
-    {
-        return $this->where($whereClause)->get();
-    }
     //一對多關聯
     // public function cases() {
     //     return $this->hasMany('App\Models\Cases', 'MemID', 'MemID');
