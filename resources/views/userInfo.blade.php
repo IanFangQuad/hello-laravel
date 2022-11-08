@@ -1,7 +1,7 @@
 @extends('layouts.layout')
-@section('title', 'login')
+@section('title', 'userinfo')
 @section('content')
-    <div class="container">
+    <div class="container my-5">
         <h3 class="h3">user info</h3>
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
@@ -11,10 +11,13 @@
             <label for="email" class="form-label">Email</label>
             <input type="text" class="form-control" id="email" name="email" value="{{ $email }}" disabled>
         </div>
+        <div class="col d-flex justify-content-end">
+            <form action="/logout" method="POST">
+                <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" id="btn-logout">log out</button>
+            </form>
+        </div>
     </div>
 @endsection
 @section('script')
-    <script>
-        $(function() {});
-    </script>
 @endsection

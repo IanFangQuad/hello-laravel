@@ -11,7 +11,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \App\Http\Requests\LogInPostRequest;
+use \App\Http\Requests\registerPostRequest;
 use \App\Http\Services\AccountService;
+use Illuminate\Support\Facades\Hash;
 
 class IndexController extends Controller
 {
@@ -25,9 +27,6 @@ class IndexController extends Controller
 
     public function index(Request $request)
     {
-        if (!Auth::check()) {
-            return view('login');
-        }
 
         $userName = Auth::user()->name;
         $email = Auth::user()->email;
@@ -36,12 +35,18 @@ class IndexController extends Controller
         return view('index', ['name' => $userName, 'id' => $id, 'email' => $email]);
     }
 
-    public function logIn(LogInPostRequest $request): array
+    public function loginPage(Request $request)
     {
-        return $this->AccountService->LogIn($request);
+        return view('login');
     }
 
-    public function logOut(Request $request)
+    public function login(LogInPostRequest $request)
+    {
+        $credentials = $request->safe()->only(['email', 'password']);
+        return $this->AccountService->login($credentials);
+    }
+
+    public function logout(Request $request)
     {
         Auth::logout();
 
@@ -49,6 +54,19 @@ class IndexController extends Controller
 
         $request->session()->regenerateToken();
 
-        return array('status' => true);
+        return redirect('/login_page');
+    }
+
+    public function signUp(Request $request)
+    {
+        return view('signUp');
+    }
+
+    public function register(registerPostRequest $request)
+    {
+        $formData = $request->safe()->only(['name', 'email', 'password']);
+        $formData['password'] = Hash::make($formData['password']);
+        
+        return $this->AccountService->register($formData);
     }
 }

@@ -2,7 +2,8 @@
 @section('title', 'login')
 @section('content')
     <div class="container my-5">
-        <form id="form-login">
+        <h3 class="h3">log in</h3>
+        <form id="form-login" action="/login" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}">
@@ -12,60 +13,29 @@
                 <input type="password" class="form-control" id="password" name="password" value="{{ old('password') }}">
             </div>
             <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
-            <div class="col d-flex justify-content-end">
-                <div class="col text-danger" id="error-msg"></div>
-                <button id="btn-login" type="button" class="btn btn-primary mx-1">log in</button>
+            <div class="col d-flex justify-content-between">
+                <div>
+                    <div class="col text-danger" id="error-msg">
+                        @if ($errors->any())
+                            <ul class="list-unstyled">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
+                <div>
+                    <a href="/signup" class="text-white text-decoration-none">
+                        <button id="" type="button" class="btn btn-secondary mx-1">
+                            sign up
+                        </button>
+                    </a>
+                    <button id="btn-login" type="submit" class="btn btn-primary mx-1">log in</button>
+                </div>
             </div>
         </form>
     </div>
 @endsection
 @section('script')
-    <script>
-        $(function() {
-            $("#btn-login").on("click", function() {
-
-                $("#error-msg").text('');
-
-                if (!$("#email").val() || !$("#password").val()) {
-                    return $("#error-msg").text('please input email/password.');
-                }
-
-                const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-                if (!emailRegex.test($("#email").val())) {
-                    return $("#error-msg").text('invalid email address.');
-                }
-
-                const form = $("#form-login")[0];
-                const formdata = new FormData(form);
-                const login = new Promise((res, rej) => {
-                    $.ajax({
-                        type: "POST",
-                        url: "/logIn",
-                        dataType: "json",
-                        contentType: false, //required
-                        processData: false, // required
-                        data: formdata,
-                        success: function(response) {
-                            res(response);
-                        },
-                        error: function(error) {
-                            rej(error);
-                        }
-                    });
-                });
-                (async () => {
-                    try {
-                        const result = await login;
-                        if (!result.status) {
-                            $("#error-msg").text(result.msg);
-                            return;
-                        }
-                        window.location.href = window.location.href;
-                    } catch (e) {
-
-                    }
-                })();
-            })
-        });
-    </script>
 @endsection
