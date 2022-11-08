@@ -23,10 +23,8 @@ class AccountService  {
 
     public function LogIn(Request $request) : array
     {
-        $validated = $request->validated();
-        $email = $validated['email'];
-        $password = $validated['password'];
-        $status = Auth::attempt(['email' => $email, 'password' => $password]);
+        $credentials = $request->safe()->only(['email', 'password']);
+        $status = Auth::attempt($credentials);
 
         return array('status' => $status,);
     }
