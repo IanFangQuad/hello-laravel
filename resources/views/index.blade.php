@@ -94,7 +94,7 @@
                                 @endforeach
                             </div>
                             <span class="material-symbols-outlined calendar-add fs-3"
-                                data-date="{{ $date['date']->format('Y/m/d') }}">
+                                data-date="{{ $date['date']->format('Y-m-d') }}">
                                 add_circle
                             </span>
                         </div>
@@ -126,7 +126,8 @@
                         <div class="mb-3">
                             <label for="type" class="form-label"><span
                                     class="text-danger required">*</span>Type</label>
-                            <select class="form-control need-calc" name="type" id="type" value="">
+                            <select class="form-control need-calc" name="type" id="type"
+                                value="{{ old('type') }}">
                                 <option value="" disabled selected>選擇假別</option>
                                 <option value="annual">特休</option>
                                 <option value="comp">補休</option>
@@ -144,9 +145,10 @@
                                     class="text-danger required">*</span>Start</label>
                             <div class="d-flex align-items-center">
                                 <span id="start-from" class="text-nowrap mx-2"></span>
-                                <input class="form-control need-calc" type="date" name="start-date" value=""
-                                    id="start-date">
-                                <select class="form-control ms-2 need-calc" name="start-time" id="start-time">
+                                <input class="form-control need-calc" type="date" name="start-date"
+                                    value="{{ old('start-date') }}" id="start-date">
+                                <select class="form-control ms-2 need-calc" name="start-time" id="start-time"
+                                    value="{{ old('start-time') }}">
                                     <option value="09:00:00">09:00</option>
                                     <option value="10:00:00">10:00</option>
                                     <option value="11:00:00">11:00</option>
@@ -164,9 +166,10 @@
                             <label for="end" class="form-label"><span
                                     class="text-danger required">*</span>End</label>
                             <div class="d-flex align-items-center">
-                                <input class="form-control need-calc" type="date" name="end-date" value=""
-                                    id="end-date">
-                                <select class="form-control ms-2 need-calc" name="end-time" id="end-time">
+                                <input class="form-control need-calc" type="date" name="end-date"
+                                    value="{{ old('end-date') }}" id="end-date">
+                                <select class="form-control ms-2 need-calc" name="end-time" id="end-time"
+                                    value="{{ old('end-time') }}">
                                     <option value="09:00:00">09:00</option>
                                     <option value="10:00:00">10:00</option>
                                     <option value="11:00:00">11:00</option>
@@ -237,11 +240,14 @@
             modalMsg('modal', 'modal-body', window.location.href);
 
             $(".calendar-add").on("click", function() {
-                let date = $(this).data('date');
-                $("#start-from").text(date);
+                const date = $(this).data('date');
                 $("input[name=start-date]").val(date);
-                date = date.replaceAll('/', '-');
                 $("input[name=end-date]").val(date);
+                const dateReform = date.replaceAll('-', '/');
+                $("#start-from").text(dateReform);
+                $("#total").addClass('text-white');
+
+                console.log($("input[name=end-date]").val())
 
                 $("#modal-title").text('New event');
 
@@ -266,7 +272,6 @@
                 const startStamp = moment(startDate + ' ' + startTime, "YYYY-MM-DD hh:mm:ss");
                 const endStamp = moment(endDate + ' ' + endTime, "YYYY-MM-DD hh:mm:ss");
 
-                $("#total").addClass('text-white');
                 $("#btn-submit").prop('disabled', true);
 
                 if (startStamp.diff(endStamp) >= 0) {
