@@ -10,19 +10,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use \App\Http\Requests\LogInPostRequest;
 use \App\Http\Requests\registerPostRequest;
 use \App\Http\Services\AccountService;
-use Illuminate\Support\Facades\Hash;
+use \App\Http\Services\CalendarService;
 
 class IndexController extends Controller
 {
 
     private $accountService;
+    private $calendarService;
 
-    public function __construct(AccountService $accountService)
+    public function __construct(AccountService $accountService, CalendarService $calendarService)
     {
         $this->AccountService = $accountService;
+        $this->CalendarService = $calendarService;
     }
 
     public function index(Request $request)
@@ -32,7 +35,10 @@ class IndexController extends Controller
         $email = Auth::user()->email;
         $id = Auth::user()->id;
 
-        return view('index', ['name' => $userName, 'id' => $id, 'email' => $email]);
+        $dateParms = $request->query();
+        $calendar = $this->CalendarService->getByMonth($dateParms);
+
+        return view('index', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
     }
 
     public function loginPage(Request $request)
@@ -57,16 +63,16 @@ class IndexController extends Controller
         return redirect('/login_page');
     }
 
-    public function signUp(Request $request)
+    public function signup(Request $request)
     {
         return view('signUp');
     }
 
-    public function register(registerPostRequest $request)
+    public function register(RegisterPostRequest $request)
     {
         $formData = $request->safe()->only(['name', 'email', 'password']);
         $formData['password'] = Hash::make($formData['password']);
-        
+
         return $this->AccountService->register($formData);
     }
 }

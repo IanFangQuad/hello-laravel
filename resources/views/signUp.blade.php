@@ -44,17 +44,7 @@
 @section('script')
     <script>
         $(function() {
-            const msg = $(".modal-body").text().trim();
-            if (msg) {
-                const modal = new bootstrap.Modal(document.getElementById('modal'));
-                const modelEl = document.getElementById('modal');
-                
-                modelEl.addEventListener('hide.bs.modal', function(event) {
-                    window.location = '/login_page';
-                })
-
-                modal.show();
-            }
+            modalMsg('modal', 'modal-body', '/login_page');
         });
     </script>
 @endsection

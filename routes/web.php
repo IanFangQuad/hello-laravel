@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LeaveController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,6 @@ Route::post('/login', [IndexController::class, 'login']);
 Route::post('/logout', [IndexController::class, 'logout']);
 
 Route::get('/user/{id}', [UserController::class, 'get'])->middleware('auth');
+
+Route::post('/leave', [LeaveController::class, 'create'])->middleware('auth');
+Route::delete('/leave/{id}', [LeaveController::class, 'delete'])->middleware('auth');

@@ -1,0 +1,94 @@
+.calendar-wrapper {
+    width: 100%;
+}
+
+.calendar-cell {
+    width: 14.28%;
+    color: rgba(0, 0, 0, 0.8);
+    border-bottom: solid 1px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.calendar-cell:not(.calendar-title):hover {
+    background-color: rgba(238, 238, 238, 0.3);
+}
+
+.calendar-title {
+    border: none;
+    border-bottom: solid 1px black;
+    background: #eee;
+    text-align: center;
+    padding: 10px 0 10px 0;
+}
+
+.calendar-date {
+    height: 180px;
+}
+
+.grayscale {
+    color: #aaa;
+    filter: grayscale(0.5);
+}
+
+.calendar-annotation {
+    font-size: small;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.calendar-add {
+    display: none;
+    color: #ccc;
+    position: absolute;
+    top: 0.2rem;
+    right: 0.3rem;
+    cursor: pointer;
+}
+
+.calendar-cell:hover .calendar-add {
+    display: block;
+}
+
+.calendar-add:hover {
+    color: rgb(33, 96, 231);
+
+}
+
+.event-tag {
+    font-size: 0.7rem;
+    font-weight: normal;
+    padding: 2px 4px 2px 4px;
+}
+
+.event-tag:hover {
+    background-color: rgba(33, 96, 231, 0.10);
+}
+
+.tag-tool {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tag-tool .material-symbols-outlined {
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+.tag-tool .material-symbols-outlined:hover {
+    color: rgb(33, 96, 231);
+}
+
+.event-tag:hover .tag-tool {
+    display: flex;
+
+}
+
+.event-tag .badge {
+    font-size: 0.5rem;
+}
+
+.tag-wrapper {
+    overflow: scroll;
+    height: 150px;
+}
