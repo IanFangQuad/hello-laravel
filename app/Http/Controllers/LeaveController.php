@@ -49,6 +49,12 @@ class LeaveController extends Controller
     public function update(LeavePostRequest $request, $id)
     {
         $formData = $request->safe()->only(['member_id', 'type', 'start-date', 'start-time', 'end-date', 'end-time', 'description', 'hours']);
+
+        $formData['start-date'] = str_replace('/', '-', $formData['start-date']);
+        $formData['start'] = $formData['start-date'] . ' ' . $formData['start-time'];
+        $formData['end'] = $formData['end-date'] . ' ' . $formData['end-time'];
+        unset($formData['start-date'], $formData['start-time'], $formData['end-date'], $formData['end-time']);
+
         $this->LeaveRepository->update($id, $formData);
 
         return redirect()->back()->with('msg', 'update success');
