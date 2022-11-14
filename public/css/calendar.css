@@ -92,3 +92,7 @@
     overflow: scroll;
     height: 150px;
 }
+
+.w-inherit{
+    width: inherit;
+}

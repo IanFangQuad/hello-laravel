@@ -75,7 +75,8 @@
                                                 data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
                                                 data-approval="{{ $event['approval'] }}"
                                                 data-hours="{{ $event['hours'] }}"
-                                                data-member="{{ $event['member']['id'] }}">
+                                                data-member="{{ $event['member']['id'] }}"
+                                                data-description="{{ $event['description'] }}">
                                                 info
                                             </span>
                                             <form id="form-delete-{{ $event['id'] }}" action="/leave/{{ $event['id'] }}"
@@ -186,8 +187,16 @@
                                 value="{{ old('description') }}">
                         </div>
                         <div class="">
-                            <div id="total" class="text-danger text-white">you will use XX days for XX </div>
+                            <div id="total" class="text-danger text-white">you will use XX days for XX</div>
                             <input id="hours" type="text" name="hours" class="d-none" value="">
+                            <div id="usage-block">
+                                <label for="usage" class="form-label">usage</label>
+                                <div class="d-flex align-items-center">
+                                    <input id="usage" type="text" name="usage" class="form-control w-inherit"
+                                        value="" disabled>
+                                    <span id="time-unit" class="mx-2">days</span>
+                                </div>
+                            </div>
                         </div>
                         <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="col d-flex justify-content-between">
@@ -217,113 +226,6 @@
     </div>
     <!-- form Modal -->
 
-    <!-- detail Modal -->
-    <div class="modal fade" id="detail-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true" data-bs-target="#detail-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Event detail</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <select class="form-control" name="name" id="name" disabled>
-                                <option value=""></option>
-                            </select>
-                            <input class="d-none" type="text" name="member_id" value="{{ $id }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Type</label>
-                            <select class="form-control need-calc" name="type" id="type"
-                                value="{{ old('type') }}">
-                                <option value="" disabled selected>選擇假別</option>
-                                <option value="annual">特休</option>
-                                <option value="comp">補休</option>
-                                <option value="personal">事假</option>
-                                <option value="offical">公假</option>
-                                <option value="marriage">婚假</option>
-                                <option value="funeral">喪假</option>
-                                <option value="menstrul">生理假</option>
-                                <option value="maternity">產假</option>
-                                <option value="paternity">陪產假</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="start" class="form-label">Start</label>
-                            <div class="d-flex align-items-center">
-                                {{-- <span id="start-from" class="text-nowrap mx-2"></span> --}}
-                                <input class="form-control need-calc" type="date" name="start-date" value=""
-                                    id="start-date">
-                                <select class="form-control ms-2 need-calc" name="start-time" id="start-time">
-                                    <option value="09:00">09:00</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="18:00">18:00</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="end" class="form-label">End</label>
-                            <div class="d-flex align-items-center">
-                                <input class="form-control need-calc" type="date" name="end-date" value=""
-                                    id="end-date">
-                                <select class="form-control ms-2 need-calc" name="end-time" id="end-time">
-                                    <option value="09:00">09:00</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="18:00">18:00</option>
-                                </select>
-                            </div>
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <input class="form-control" type="text" name="description" value="">
-                        </div>
-                        <div class="">
-                            <div id="total" class="text-danger text-white">you will use XX days for XX </div>
-                            <input id="hours" type="text" name="hours" class="d-none" value="">
-                        </div>
-                        <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <div class="col d-flex justify-content-between">
-                            <div>
-                                <div class="col text-danger" id="error-msg">
-                                    @if ($errors->any())
-                                        <ul class="list-unstyled">
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary d-none">Edit</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- detail Modal -->
-
     <div id="data" class="d-none" data-calendar="{{ json_encode($calendar) }}"></div>
 
 @endsection
@@ -347,10 +249,6 @@
                 $("#method").val('POST');
 
                 toEditMode();
-
-
-
-
 
                 const modal = new bootstrap.Modal(document.getElementById('form-modal'));
                 modal.show();
@@ -480,7 +378,6 @@
                 toEditMode();
                 $("#start-date").show();
                 $("#start-from").hide();
-
             });
         });
 
@@ -489,6 +386,7 @@
             $("#start-date").hide();
             $("#btn-edit").hide();
             $("#btn-submit").show();
+            $("#usage-block").hide();
             $(".required").show();
             $("#form-data input").prop('readonly', false);
             $("#form-data select").prop('disabled', false);
@@ -499,6 +397,7 @@
             $("#start-date").show();
             $("#btn-edit").show();
             $("#btn-submit").hide();
+            $("#usage-block").show();
             $(".required").hide();
             $("#form-data input").prop('readonly', true);
             $("#form-data select").prop('disabled', true);
@@ -509,8 +408,8 @@
             const endDate = data.end.split(' ')[0];
             const startTime = data.start.split(' ')[1];
             const endTime = data.end.split(' ')[1];
-            $("#start-date").val(endDate);
-            $("#end-date").val(startDate);
+            $("#start-date").val(startDate);
+            $("#end-date").val(endDate);
             $("#start-time").val(startTime);
             $("#end-time").val(endTime);
 
@@ -520,6 +419,8 @@
             const description = data.description;
             $("#description").val(description);
 
+            const days = (data.hours) / 24;
+            $("#usage").val(days);
         }
     </script>
 @endsection

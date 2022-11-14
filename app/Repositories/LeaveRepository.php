@@ -23,4 +23,9 @@ class LeaveRepository
     {
         return Leave::find($id)->delete();
     }
+
+    public function update($id, array $params)
+    {
+        return Leave::find($id)->update($params);
+    }
 }

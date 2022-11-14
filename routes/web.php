@@ -29,3 +29,4 @@ Route::get('/user/{id}', [UserController::class, 'get'])->middleware('auth');
 
 Route::post('/leave', [LeaveController::class, 'create'])->middleware('auth');
 Route::delete('/leave/{id}', [LeaveController::class, 'delete'])->middleware('auth');
+Route::patch('/leave/{id}', [LeaveController::class, 'update'])->middleware('auth');

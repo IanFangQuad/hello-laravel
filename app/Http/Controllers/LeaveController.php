@@ -46,4 +46,12 @@ class LeaveController extends Controller
         return redirect()->back()->with('msg', 'delete success');
     }
 
+    public function update(LeavePostRequest $request, $id)
+    {
+        $formData = $request->safe()->only(['member_id', 'type', 'start-date', 'start-time', 'end-date', 'end-time', 'description', 'hours']);
+        $this->LeaveRepository->update($id, $formData);
+
+        return redirect()->back()->with('msg', 'update success');
+    }
+
 }
