@@ -241,13 +241,11 @@
 
             $(".calendar-add").on("click", function() {
                 const date = $(this).data('date');
-                $("input[name=start-date]").val(date);
-                $("input[name=end-date]").val(date);
+                $("#start-date").val(date);
+                $("#end-date").val(date);
                 const dateReform = date.replaceAll('-', '/');
                 $("#start-from").text(dateReform);
                 $("#total").addClass('text-white');
-
-                console.log($("input[name=end-date]").val())
 
                 $("#modal-title").text('New event');
 
