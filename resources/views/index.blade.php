@@ -186,7 +186,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <input class="form-control" type="text" name="description" id="description"
+                            <input class="form-control need-calc" type="text" name="description" id="description"
                                 value="{{ old('description') }}">
                         </div>
                         <div class="">
