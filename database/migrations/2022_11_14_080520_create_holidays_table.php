@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::drop('leaves');
-
-        if (!Schema::hasTable('leaves')) {
-            Schema::create('leaves', function (Blueprint $table) {
+        if (!Schema::hasTable('holidays')) {
+            Schema::create('holidays', function (Blueprint $table) {
                 $table->id();
-                $table->integer('member_id')->nullable();
-                $table->string('type')->nullable();
-                $table->timestamp('start')->nullable();
-                $table->timestamp('end')->nullable();
-                $table->text('description');
-                $table->boolean('approval')->nullable();
+                $table->date('date');
+                $table->string('weekName');
+                $table->boolean('dayoff');
+                $table->text('annotation')->nullable();
                 $table->timestamps();
             });
         }

@@ -16,12 +16,13 @@ return new class extends Migration
         if (!Schema::hasTable('leaves')) {
             Schema::create('leaves', function (Blueprint $table) {
                 $table->id();
-                $table->integer('member_id')->nullable();
-                $table->string('type')->nullable();
-                $table->date('start')->nullable();
-                $table->date('end')->nullable();
-                $table->text('description');
-                $table->boolean('approval')->nullable();
+                $table->integer('member_id');
+                $table->string('type');
+                $table->timestamp('start');
+                $table->timestamp('end');
+                $table->text('description')->nullable();
+                $table->boolean('approval');
+                $table->integer('hours')->default(0);
                 $table->timestamps();
             });
         }

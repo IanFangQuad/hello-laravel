@@ -4,18 +4,15 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use \App\Models\Member;
 use \App\Repositories\MemberRepository;
 
 class AccountService
 {
 
-    private $member;
     private $memberRepository;
 
-    public function __construct(Member $member, MemberRepository $memberRepository)
+    public function __construct(MemberRepository $memberRepository)
     {
-        $this->Member = $member;
         $this->MemberRepository = $memberRepository;
     }
 

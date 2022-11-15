@@ -36,7 +36,7 @@ class IndexController extends Controller
         $id = Auth::user()->id;
 
         $dateParms = $request->query();
-        $calendar = $this->CalendarService->getByMonth($dateParms);
+        $calendar = $this->CalendarService->getSchedules($dateParms);
 
         return view('index', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
     }

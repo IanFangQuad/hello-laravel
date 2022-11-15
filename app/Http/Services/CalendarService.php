@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use \App\Repositories\LeaveRepository;
+use \App\Repositories\FestivalRepository;
 
 class CalendarService
 {
@@ -15,7 +16,7 @@ class CalendarService
         $this->LeaveRepository = $leaveRepository;
     }
 
-    public function getByMonth($parms): array
+    public function getSchedules($parms): array
     {
         $year = isset($parms['y']) ? $parms['y'] : Carbon::now()->format('Y');
         $month = isset($parms['m']) ? $parms['m'] : Carbon::now()->format('m');
@@ -104,6 +105,7 @@ class CalendarService
 
     private function attachFestivals(array $period): array
     {
+        //抓今年跟明年 //前端驗證日期不能小於現在
         $year = $period[0]['date']->format('Y');
         $file = "calendar/{$year}.csv";
         $lines = $this->readCSV($file, array('delimiter' => ','));

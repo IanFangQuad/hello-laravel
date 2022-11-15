@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Festival;
+use App\Models\Holiday;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 
-class FestivalSeeder extends Seeder
+class HolidaySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,10 +17,10 @@ class FestivalSeeder extends Seeder
 
     public function run()
     {
-        $table = 'festivals';
+        $table = 'holidays';
         $path = '/calendar';
 
-        $files = $this->getCSVFiles($path);
+        $files = $this->getFiles($path);
 
         foreach ($files as $file) {
 
@@ -30,13 +30,17 @@ class FestivalSeeder extends Seeder
 
                 $date = Carbon::parse($line[0])->format('Y-m-d');
                 $dayoff = ($line[2] == 0 ? false : true);
+                $annotation = $line[3];
 
-                Festival::create([
-                    'date' => $date,
-                    'weekName' => $line[1],
-                    'dayoff' => $dayoff,
-                    'annotation' => $line[3],
-                ]);
+                if ($dayoff || !empty($annotation)) {
+                    Holiday::create([
+                        'date' => $date,
+                        'weekName' => $line[1],
+                        'dayoff' => $dayoff,
+                        'annotation' => $annotation,
+                    ]);
+                }
+
             }
         }
     }
@@ -57,7 +61,7 @@ class FestivalSeeder extends Seeder
         return $lines;
     }
 
-    private function getCSVFiles($path)
+    private function getFiles($path)
     {
         $fileNames = [];
         $path = public_path($path);

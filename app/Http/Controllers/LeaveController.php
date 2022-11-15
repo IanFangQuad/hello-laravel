@@ -16,7 +16,6 @@ class LeaveController extends Controller
 {
 
     private $leaveRepository;
-    private $member;
 
     public function __construct(LeaveRepository $leaveRepository, )
     {
