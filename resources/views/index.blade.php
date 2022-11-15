@@ -132,8 +132,7 @@
                             <input class="d-none" type="text" name="member_id" value="{{ $id }}">
                         </div>
                         <div class="mb-3">
-                            <label for="type" class="form-label"><span
-                                    class="text-danger required">*</span>Type</label>
+                            <label for="type" class="form-label"><span class="text-danger required">*</span>Type</label>
                             <select class="form-control need-calc" name="type" id="type"
                                 value="{{ old('type') }}">
                                 <option value="" disabled selected>選擇假別</option>
@@ -236,7 +235,7 @@
     </div>
     <!-- form Modal -->
 
-    <div id="data" class="d-none" data-calendar="{{ json_encode($calendar) }}"></div>
+    <div id="data" class="d-none" data-holidays="{{ json_encode($calendar['holidays']) }}"></div>
 
 @endsection
 @section('script')
@@ -260,6 +259,7 @@
                 $("#method").val('POST');
 
                 toEditMode();
+                resetValue();
 
                 const modal = new bootstrap.Modal(document.getElementById('form-modal'));
                 modal.show();
@@ -295,19 +295,15 @@
                     const isLeaveInSameBlock = !(isStartFromMorning && isEndAfterNoon);
 
                     leaveCount = isLeaveInSameBlock ? 0.5 : 1;
-                    let msg = `you will use <b>${leaveCount} day</b> for <b>${type} leave</b>`;
+                    let unit = 'day';
+                    let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
                     $("#total").html(msg).removeClass('text-white');
                     $("#hours").val(leaveCount * 24);
                     $("#btn-submit").prop('disabled', false);
                     return;
                 }
 
-                let calendar = $("#data").data('calendar');
-                let dayoff = calendar['dates'].filter((date) => {
-                    return date.dayoff == true
-                }).map((item) => {
-                    return moment(item.date).format('YYYY-MM-DD');
-                })
+                let dayoff = $("#data").data('holidays');
 
                 let days = endStamp.diff(startStamp, 'days');
                 for (let i = 0; i <= days; i++) {
@@ -317,37 +313,35 @@
                     clone.subtract(i, 'days');
                     const afternoon = moment(date + ' 12:00:00', "YYYY-MM-DD hh:mm:ss");
 
+                    if (date in dayoff) {
+                        leaveCount += 0;
+                        continue;
+                    }
+
                     if (i == 0) {
-                        if (!dayoff.includes(date)) {
-                            leaveCount += 1;
-                            const isStartFromMorning = (afternoon.diff(startStamp) > 0);
-                            leaveCount -= isStartFromMorning ? 0 : 0.5;
-                            console.log(leaveCount)
-                            continue;
-                        }
+                        leaveCount += 1;
+                        const isStartFromMorning = (afternoon.diff(startStamp) > 0);
+                        leaveCount -= isStartFromMorning ? 0 : 0.5;
+                        continue;
                     }
 
                     if (i == days) {
-                        if (!dayoff.includes(date)) {
-                            const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
-                            if (startTime == endTime) {
-                                leaveCount += 0;
-                                continue;
-                            }
-
-                            leaveCount += isEndAfterNoon ? 1 : 0.5;
-
+                        const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
+                        if (startTime == endTime) {
+                            leaveCount += 0;
                             continue;
                         }
+
+                        leaveCount += isEndAfterNoon ? 1 : 0.5;
+                        continue;
                     }
 
-                    if (!dayoff.includes(date)) {
-                        leaveCount += 1;
-                    }
+                    leaveCount += 1;
 
                 }
 
-                let msg = `you will use <b>${leaveCount} days</b> for <b>${type} leave</b>`;
+                let unit = (leaveCount > 1) ? 'days' : 'day';
+                let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
                 $("#total").html(msg).removeClass('text-white');
                 $("#hours").val(leaveCount * 24);
                 $("#btn-submit").prop('disabled', false);
@@ -431,6 +425,13 @@
 
             const days = (data.hours) / 24;
             $("#usage").val(days);
+        }
+
+        function resetValue() {
+            $("#start-time").val('09:00:00');
+            $("#end-time").val('09:00:00');
+            $("#type").val('');
+            $("#description").val('');
         }
     </script>
 @endsection
