@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Holiday;
+use App\Helper\Helper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\File;
 
 class HolidaySeeder extends Seeder
 {
@@ -20,11 +20,11 @@ class HolidaySeeder extends Seeder
         $table = 'holidays';
         $path = '/calendar';
 
-        $files = $this->getFiles($path);
+        $files = Helper::getfFileNames($path);
 
         foreach ($files as $file) {
 
-            $lines = $this->readCSV($file);
+            $lines = Helper::readCSV($file);
 
             foreach ($lines as $line) {
 
@@ -45,32 +45,4 @@ class HolidaySeeder extends Seeder
         }
     }
 
-    private function readCSV($csvFile, array $parms = ['delimiter' => ',']): array
-    {
-
-        $fileHandle = fopen($csvFile, 'r');
-        while (!feof($fileHandle)) {
-            $lines[] = fgetcsv($fileHandle, 0, $parms['delimiter']);
-        }
-        fclose($fileHandle);
-        array_shift($lines); // delete first line (column title)
-        $lines = array_filter($lines, function ($item) {
-            return $item !== false;
-        });
-
-        return $lines;
-    }
-
-    private function getFiles($path)
-    {
-        $fileNames = [];
-        $path = public_path($path);
-        $files = File::allFiles($path);
-
-        foreach ($files as $file) {
-            array_push($fileNames, pathinfo($file)['dirname'] . '/' . pathinfo($file)['basename']);
-        }
-
-        return $fileNames;
-    }
 }

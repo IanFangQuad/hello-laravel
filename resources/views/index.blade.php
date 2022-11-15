@@ -205,7 +205,6 @@
                                 value="{{ old('description') }}">
                         </div>
                         <div class="">
-                            <input id="hours" type="text" name="hours" class="d-none" value="">
                             <div id="usage-block">
                                 <label for="usage" class="form-label">usage</label>
                                 <div class="d-flex align-items-center">
@@ -323,28 +322,36 @@
                 let dayoff = $("#data").data('holidays');
 
                 let days = endStamp.diff(startStamp, 'days');
-                for (let i = 0; i <= days; i++) {
 
+                let range = [];
+
+                for (let i = 0; i <= days; i++) {
                     let clone = startStamp.clone();
                     let date = clone.add(i, 'days').format('YYYY-MM-DD');
                     clone.subtract(i, 'days');
+                    range.push(date);
+                }
+
+                range = range.filter(function(date, index) {
+                    return !(date in dayoff);
+                })
+                let lastIndex = range.length - 1;
+
+                for (let i = 0; i <= lastIndex; i++) {
+
+                    let date = range[i];
+
                     const afternoon = moment(date + ' 12:00:00', "YYYY-MM-DD hh:mm:ss");
 
-                    if (date in dayoff) {
-                        leaveCount += 0;
-                        continue;
-                    }
-
                     if (i == 0) {
-                        leaveCount += 1;
                         const isStartFromMorning = (afternoon.diff(startStamp) > 0);
-                        leaveCount -= isStartFromMorning ? 0 : 0.5;
+                        leaveCount += isStartFromMorning ? 1 : 0.5;
                         continue;
                     }
 
-                    if (i == days) {
+                    if (i == lastIndex) {
                         const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
-                        if (startTime == endTime) {
+                        if (startTime == endTime && startTime == '09:00:00') {
                             leaveCount += 0;
                             continue;
                         }
@@ -360,7 +367,6 @@
                 let unit = (leaveCount > 1) ? 'days' : 'day';
                 let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
                 $("#total").html(msg).removeClass('text-white');
-                $("#hours").val(leaveCount * 24);
                 $("#btn-submit").prop('disabled', false);
             })
 

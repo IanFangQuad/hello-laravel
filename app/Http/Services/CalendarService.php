@@ -6,6 +6,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use \App\Repositories\HolidayRepository;
 use \App\Repositories\LeaveRepository;
+use \App\Helper\Helper;
 
 class CalendarService
 {
@@ -29,7 +30,7 @@ class CalendarService
         $year = Carbon::parse($year)->firstOfYear()->firstOfMonth()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
         $next = Carbon::parse($year)->add(1, 'year')->lastOfYear()->lastOfMonth()->endOfWeek(Carbon::SATURDAY)->format('Y-m-d');
         $holidays = $this->HolidayRepository->getByPeriod($year, $next)->toArray();
-        $holidays = $this->replaceIndexByDate($holidays);
+        $holidays = Helper::replaceIndexByDate($holidays);
 
         $period = Carbon::parse($startOfMonth)->daysUntil($endOfMonth);
         $period = $this->attachProps($period);
@@ -43,40 +44,6 @@ class CalendarService
         ];
 
         return $calendar;
-    }
-
-    private function replaceIndexByDate(array $array, $isRange = false)
-    {
-        $new = [];
-
-        if ($isRange) {
-            foreach ($array as $item) {
-                $start = explode(' ', $item['start'])[0];
-                $end = explode(' ', $item['end'])[0];
-
-                $periods = [];
-                $range = Carbon::parse($start)->daysUntil($end);
-                foreach ($range as $date) {
-                    $periods[] = $date->format('Y-m-d');
-                }
-
-                foreach ($periods as $date) {
-                    if (!isset($new[$date])) {
-                        $new[$date] = [$item];
-                    } else {
-                        array_push($new[$date], $item);
-                    }
-                }
-            }
-
-            return $new;
-        }
-
-        foreach ($array as $index => $item) {
-            $new[$item['date']] = $array[$index];
-        }
-
-        return $new;
     }
 
     private function attachProps(CarbonPeriod $period): array
@@ -118,7 +85,7 @@ class CalendarService
         $endOfMonth = $period[$lastIndex]['date']->format('Y-m-d');
 
         $leaves = $this->LeaveRepository->getByPeriod($startOfMonth, $endOfMonth)->toArray();
-        $leaves = $this->replaceIndexByDate($leaves, true);
+        $leaves = Helper::replaceIndexByDate($leaves, true);
 
         foreach ($period as $index => $date) {
 
