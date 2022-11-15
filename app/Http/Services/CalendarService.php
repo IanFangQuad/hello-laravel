@@ -4,9 +4,9 @@ namespace App\Http\Services;
 
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
+use \App\Helper\Helper;
 use \App\Repositories\HolidayRepository;
 use \App\Repositories\LeaveRepository;
-use \App\Helper\Helper;
 
 class CalendarService
 {
@@ -27,10 +27,12 @@ class CalendarService
         $startOfMonth = $target->copy()->firstOfMonth()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
         $endOfMonth = $target->copy()->lastOfMonth()->endOfWeek(Carbon::SATURDAY)->format('Y-m-d');
         // get holidays for front client calculate leave hours
-        $year = Carbon::parse($year)->firstOfYear()->firstOfMonth()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
-        $next = Carbon::parse($year)->add(1, 'year')->lastOfYear()->lastOfMonth()->endOfWeek(Carbon::SATURDAY)->format('Y-m-d');
-        $holidays = $this->HolidayRepository->getByPeriod($year, $next)->toArray();
-        $holidays = Helper::replaceIndexByDate($holidays);
+        $start = Carbon::parse("{$year}-01-01")->firstOfYear()->format('Y-m-d');
+        $end = Carbon::parse($year)->add(1, 'year')->lastOfYear()->format('Y-m-d');
+
+        $holidays = $this->HolidayRepository->getByPeriod($start, $end)->toArray();
+        $hasTargetSchedule = $this->checkSchedule($year, $holidays);
+        $holidays = $hasTargetSchedule ? Helper::replaceIndexByDate($holidays) : [];
 
         $period = Carbon::parse($startOfMonth)->daysUntil($endOfMonth);
         $period = $this->attachProps($period);
@@ -102,5 +104,20 @@ class CalendarService
         }
 
         return $period;
+    }
+
+    private function checkSchedule($targetYear, array $holidays)
+    {
+        $hasTargetSchedule = false;
+
+        foreach ($holidays as $holiday) {
+            $year = Carbon::parse($holiday['date'])->format('Y');
+            if ($year == $targetYear) {
+                $hasTargetSchedule = true;
+                break;
+            }
+        }
+
+        return $hasTargetSchedule;
     }
 }

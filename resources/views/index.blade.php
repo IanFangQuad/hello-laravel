@@ -40,81 +40,89 @@
                     <div class="calendar-cell calendar-title">Thursday</div>
                     <div class="calendar-cell calendar-title">Friday</div>
                     <div class="calendar-cell calendar-title">Saturday</div>
-                    @foreach ($calendar['dates'] as $date)
-                        @php
-                            $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
-                            $isTextRed = $date['dayoff'];
-                        @endphp
-                        <div @class([
-                            'calendar-cell',
-                            'calendar-date',
-                            'fw-bold',
-                            'fs-5',
-                            'text-danger' => $isTextRed,
-                            'grayscale' => !$isCurrnetMonth,
-                        ]) data-date="{{ $date['date']->format('Y-m-d') }}">
-                            <div class="row w-100">
-                                <div class="col-auto">{{ $date['date']->format('d') }}</div>
-                                <div @class([
-                                    'col',
-                                    'p-0',
-                                    'text-nowrap',
-                                    'd-flex',
-                                    'justify-content-center',
-                                    'align-items-center',
-                                    'calendar-annotation',
-                                    'text-danger' => $isTextRed,
-                                ])>
-                                    {{ $date['annotation'] }}
-                                </div>
-                            </div>
-                            <div class="tag-wrapper">
-                                @foreach ($date['events'] as $event)
-                                    <div class="border border-1 rounded event-tag my-1 mx-2 ">
-                                        <div class="d-flex">
-                                            <div class="col-auto p-0 mx-1 fw-bold">{{ $event['member']['name'] }}</div>
-                                            <div class="col-auto p-0"><span
-                                                    class="badge bg-warning text-dark">{{ $event['type'] }}</span></div>
-                                        </div>
-                                        <div class="col p-0 mx-1">{{ $event['description'] }}</div>
-                                        <div class="tag-tool my-1">
-                                            <span class="material-symbols-outlined mx-1 btn-detail"
-                                                data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
-                                                data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
-                                                data-approval="{{ $event['approval'] }}"
-                                                data-hours="{{ $event['hours'] }}"
-                                                data-member="{{ $event['member']['id'] }}"
-                                                data-description="{{ $event['description'] }}">
-                                                info
-                                            </span>
-                                            <form id="form-delete-{{ $event['id'] }}" action="/leave/{{ $event['id'] }}"
-                                                method="POST" class="d-flex align-items-center">
-                                                @method('DELETE')
-                                                @csrf
-                                                <span class="material-symbols-outlined mx-1 btn-delete"
-                                                    data-id="{{ $event['id'] }}">
-                                                    delete
-                                                </span>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
+                    @if (empty($calendar['holidays']))
+                        <div class="col-12 p-5 d-felx align-items-center justify-content-center text-center fs-2">The schedule of year you
+                            pick is not ready yet</div>
+                    @else
+                        @foreach ($calendar['dates'] as $date)
                             @php
-                                $now = Illuminate\Support\Carbon::now();
-                                $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                                $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
+                                $isTextRed = $date['dayoff'];
                             @endphp
-                            <span @class([
-                                'material-symbols-outlined',
-                                'calendar-add',
-                                'fs-3',
-                                'd-none' => !$canAdd,
+                            <div @class([
+                                'calendar-cell',
+                                'calendar-date',
+                                'fw-bold',
+                                'fs-5',
+                                'text-danger' => $isTextRed,
+                                'grayscale' => !$isCurrnetMonth,
                             ]) data-date="{{ $date['date']->format('Y-m-d') }}">
-                                add_circle
-                            </span>
-                        </div>
-                    @endforeach
+                                <div class="row w-100">
+                                    <div class="col-auto">{{ $date['date']->format('d') }}</div>
+                                    <div @class([
+                                        'col',
+                                        'p-0',
+                                        'text-nowrap',
+                                        'd-flex',
+                                        'justify-content-center',
+                                        'align-items-center',
+                                        'calendar-annotation',
+                                        'text-danger' => $isTextRed,
+                                    ])>
+                                        {{ $date['annotation'] }}
+                                    </div>
+                                </div>
+                                <div class="tag-wrapper">
+                                    @foreach ($date['events'] as $event)
+                                        <div class="border border-1 rounded event-tag my-1 mx-2 ">
+                                            <div class="d-flex">
+                                                <div class="col-auto p-0 mx-1 fw-bold">{{ $event['member']['name'] }}</div>
+                                                <div class="col-auto p-0"><span
+                                                        class="badge bg-warning text-dark">{{ $event['type'] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col p-0 mx-1">{{ $event['description'] }}</div>
+                                            <div class="tag-tool my-1">
+                                                <span class="material-symbols-outlined mx-1 btn-detail"
+                                                    data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
+                                                    data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
+                                                    data-approval="{{ $event['approval'] }}"
+                                                    data-hours="{{ $event['hours'] }}"
+                                                    data-member="{{ $event['member']['id'] }}"
+                                                    data-description="{{ $event['description'] }}">
+                                                    info
+                                                </span>
+                                                <form id="form-delete-{{ $event['id'] }}"
+                                                    action="/leave/{{ $event['id'] }}" method="POST"
+                                                    class="d-flex align-items-center">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <span class="material-symbols-outlined mx-1 btn-delete"
+                                                        data-id="{{ $event['id'] }}">
+                                                        delete
+                                                    </span>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                @php
+                                    $now = Illuminate\Support\Carbon::now();
+                                    $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                                @endphp
+                                <span @class([
+                                    'material-symbols-outlined',
+                                    'calendar-add',
+                                    'fs-3',
+                                    'd-none' => !$canAdd,
+                                ]) data-date="{{ $date['date']->format('Y-m-d') }}">
+                                    add_circle
+                                </span>
+                            </div>
+                        @endforeach
+                    @endif
+
                 </div>
             </div>
         </div>
