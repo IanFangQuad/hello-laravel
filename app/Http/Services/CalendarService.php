@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use \App\Repositories\LeaveRepository;
-use \App\Repositories\FestivalRepository;
 
 class CalendarService
 {
@@ -73,13 +72,13 @@ class CalendarService
                         array_push($new[$date], $item);
                     }
                 }
-
             }
 
-        } else {
-            foreach ($array as $index => $item) {
-                $new[$item['date']] = $array[$index];
-            }
+            return $new;
+        }
+
+        foreach ($array as $index => $item) {
+            $new[$item['date']] = $array[$index];
         }
 
         return $new;

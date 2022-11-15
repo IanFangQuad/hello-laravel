@@ -8,7 +8,7 @@
                 <div class="d-flex align-items-end">
                     <span class="mx-1">hello, <a href="/user/{{ $id }}">{{ $name }}</a></span>
                     <form action="/logout" method="POST">
-                        <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
+                        @csrf
                         <button type="submit" class="btn btn-primary btn-sm" id="btn-logout">log out</button>
                     </form>
                 </div>
@@ -55,8 +55,16 @@
                         ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                             <div class="row w-100">
                                 <div class="col-auto">{{ $date['date']->format('d') }}</div>
-                                <div
-                                    class="col p-0 text-nowrap d-flex justify-content-center align-items-center calendar-annotation">
+                                <div @class([
+                                    'col',
+                                    'p-0',
+                                    'text-nowrap',
+                                    'd-flex',
+                                    'justify-content-center',
+                                    'align-items-center',
+                                    'calendar-annotation',
+                                    'text-danger' => $isTextRed,
+                                ])>
                                     {{ $date['annotation'] }}
                                 </div>
                             </div>
@@ -82,8 +90,7 @@
                                             <form id="form-delete-{{ $event['id'] }}" action="/leave/{{ $event['id'] }}"
                                                 method="POST" class="d-flex align-items-center">
                                                 @method('DELETE')
-                                                <input class="d-none" type="hidden" name="_token"
-                                                    value="{{ csrf_token() }}">
+                                                @csrf
                                                 <span class="material-symbols-outlined mx-1 btn-delete"
                                                     data-id="{{ $event['id'] }}">
                                                     delete
@@ -110,6 +117,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="/leave" method="POST" id="form-data">
+                    @csrf
                     <input type="hidden" name="_method" id="method" value="">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modal-title">New event</h5>
@@ -201,7 +209,6 @@
                                 </div>
                             </div>
                         </div>
-                        <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="col d-flex justify-content-between">
                             <div>
                                 <div class="col text-danger" id="error-msg">

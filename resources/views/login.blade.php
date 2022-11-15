@@ -12,7 +12,7 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" value="{{ old('password') }}">
             </div>
-            <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
+            @csrf
             <div class="col d-flex justify-content-between">
                 <div>
                     <div class="col text-danger" id="error-msg">

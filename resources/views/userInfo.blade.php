@@ -13,7 +13,7 @@
         </div>
         <div class="col d-flex justify-content-end">
             <form action="/logout" method="POST">
-                <input class="d-none" type="hidden" name="_token" value="{{ csrf_token() }}">
+                @csrf
                 <button type="submit" class="btn btn-primary" id="btn-logout">log out</button>
             </form>
         </div>
