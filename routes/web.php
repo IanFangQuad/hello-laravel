@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
 	Route::controller(IndexController::class)->group(function () {
-		Route::get('logout', 'logout');
+		Route::post('logout', 'logout');
         Route::get('/', 'index')->name('index');
 	});
 
