@@ -41,13 +41,15 @@
                     <div class="calendar-cell calendar-title">Friday</div>
                     <div class="calendar-cell calendar-title">Saturday</div>
                     @if (empty($calendar['holidays']))
-                        <div class="col-12 p-5 d-felx align-items-center justify-content-center text-center fs-2">The schedule of year you
+                        <div class="col-12 p-5 d-felx align-items-center justify-content-center text-center fs-2">The
+                            schedule of year you
                             pick is not ready yet</div>
                     @else
                         @foreach ($calendar['dates'] as $date)
                             @php
                                 $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
                                 $isTextRed = $date['dayoff'];
+                                $isToday = ($date['date']->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d'));
                             @endphp
                             <div @class([
                                 'calendar-cell',
@@ -56,6 +58,7 @@
                                 'fs-5',
                                 'text-danger' => $isTextRed,
                                 'grayscale' => !$isCurrnetMonth,
+                                'today' => $isToday,
                             ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                 <div class="row w-100">
                                     <div class="col-auto">{{ $date['date']->format('d') }}</div>
