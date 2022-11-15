@@ -25,13 +25,7 @@ class LeaveController extends Controller
     public function create(LeavePostRequest $request)
     {
 
-        $formData = $request->safe()->only(['member_id', 'type', 'start-date', 'start-time', 'end-date', 'end-time', 'description', 'hours']);
-
-        $formData['start-date'] = str_replace('/', '-', $formData['start-date']);
-        $formData['start'] = $formData['start-date'] . ' ' . $formData['start-time'];
-        $formData['end'] = $formData['end-date'] . ' ' . $formData['end-time'];
-        $formData['approval'] = 0;
-        unset($formData['start-date'], $formData['start-time'], $formData['end-date'], $formData['end-time']);
+        $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
 
         $this->LeaveRepository->create($formData);
 

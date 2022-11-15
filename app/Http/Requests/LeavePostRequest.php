@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use \App\Rules\GreaterThanToday;
 
 class LeavePostRequest extends FormRequest
 {
@@ -16,6 +18,16 @@ class LeavePostRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'approval' => 0,
+            'start' => $this->input('start-date') . ' ' . $this->input('start-time'),
+            'end' => $this->input('end-date') . ' ' . $this->input('end-time'),
+            'member_id' => Auth::user()->id,
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,13 +37,15 @@ class LeavePostRequest extends FormRequest
     {
         return [
             'type' => 'required',
-            'member_id' => 'required',
-            'start-date'=> 'required',
-            'start-time'=> 'required',
-            'end-date'=> 'required',
-            'end-time'=> 'required',
-            'description'=> '',
-            'hours'=> '',
+            'start-date' => ['required', new GreaterThanToday],
+            'start-time' => 'required',
+            'end-date' => 'required',
+            'end-time' => 'required',
+            'description' => '',
+            'approval' => '',
+            'start' => '',
+            'end' => '',
+            'member_id' => '',
         ];
 
     }

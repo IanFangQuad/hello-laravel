@@ -77,7 +77,7 @@
                                                     class="badge bg-warning text-dark">{{ $event['type'] }}</span></div>
                                         </div>
                                         <div class="col p-0 mx-1">{{ $event['description'] }}</div>
-                                        <div class="tag-tool">
+                                        <div class="tag-tool my-1">
                                             <span class="material-symbols-outlined mx-1 btn-detail"
                                                 data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
                                                 data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
@@ -138,7 +138,6 @@
                             <select class="form-control" name="name" id="name" disabled readonly>
                                 <option value="">{{ $name }}</option>
                             </select>
-                            <input class="d-none" type="text" name="member_id" value="{{ $id }}">
                         </div>
                         <div class="mb-3">
                             <label for="type" class="form-label"><span class="text-danger required">*</span>Type</label>
@@ -206,7 +205,6 @@
                                 value="{{ old('description') }}">
                         </div>
                         <div class="">
-                            <div id="total" class="text-danger text-white">you will use XX days for XX</div>
                             <input id="hours" type="text" name="hours" class="d-none" value="">
                             <div id="usage-block">
                                 <label for="usage" class="form-label">usage</label>
@@ -216,12 +214,13 @@
                                     <span id="time-unit" class="mx-2">days</span>
                                 </div>
                             </div>
+                            <div id="total" class="text-danger text-white">you will use XX days for XX</div>
                         </div>
                         <div class="col d-flex justify-content-between">
                             <div>
                                 <div class="col text-danger" id="error-msg">
                                     @if ($errors->any())
-                                        <ul class="list-unstyled">
+                                        <ul class="list-unstyled border border-2 border-danger rounded p-1 my-1">
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
                                             @endforeach
@@ -251,8 +250,15 @@
     <script>
         $(function() {
 
-            modalMsg('form-modal', 'error-msg', '');
             modalMsg('modal', 'modal-body', window.location.href);
+            modalMsg('form-modal', 'error-msg', '');
+            let errorMsg = $("#error-msg").text().trim();
+            if (errorMsg) {
+                toEditMode();
+                $("#modal-title").text('Event detail');
+                $("#start-date").show();
+                $("#start-from").hide();
+            }
 
             $(".calendar-add").on("click", function() {
                 const date = $(this).data('date');
@@ -266,6 +272,7 @@
 
                 $("#form-data").attr('action', '/leave');
                 $("#method").val('POST');
+                $("#error-msg").empty();
 
                 toEditMode();
                 resetValue();
@@ -289,11 +296,12 @@
                 $("#btn-submit").prop('disabled', true);
 
                 if (startStamp.diff(endStamp) >= 0) {
-                    $("#total").text('end time must bigger than start time').removeClass('text-white');
+                    $("#total").text('end time must greater than start time').removeClass('text-white');
                     return;
                 }
 
                 if (!type) {
+                    $("#total").text('please select type').removeClass('text-white');
                     return;
                 }
 
@@ -379,6 +387,7 @@
                 $("#method").val('PATCH');
 
                 $("#modal-title").text('Event detail');
+                $("#error-msg").empty();
 
                 filledWithData(data);
                 toReadOnlyMode();
@@ -395,6 +404,7 @@
         });
 
         function toEditMode() {
+            $("#total").addClass('text-white');
             $("#start-from").show();
             $("#start-date").hide();
             $("#btn-edit").hide();
@@ -406,6 +416,7 @@
         }
 
         function toReadOnlyMode() {
+            $("#total").addClass('text-white');
             $("#start-from").hide();
             $("#start-date").show();
             $("#btn-edit").show();
