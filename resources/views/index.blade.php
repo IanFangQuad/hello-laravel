@@ -100,8 +100,17 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <span class="material-symbols-outlined calendar-add fs-3"
-                                data-date="{{ $date['date']->format('Y-m-d') }}">
+
+                            @php
+                                $now = Illuminate\Support\Carbon::now();
+                                $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                            @endphp
+                            <span @class([
+                                'material-symbols-outlined',
+                                'calendar-add',
+                                'fs-3',
+                                'd-none' => !$canAdd,
+                            ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                 add_circle
                             </span>
                         </div>
