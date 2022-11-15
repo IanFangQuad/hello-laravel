@@ -16,17 +16,29 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', [IndexController::class, 'index'])->middleware('auth')->name('index');
+Route::middleware(['auth'])->group(function () {
+	Route::controller(IndexController::class)->group(function () {
+		Route::get('logout', 'logout');
+        Route::get('/', 'index')->name('index');
+	});
 
-Route::get('/signup', [IndexController::class, 'signup']);
-Route::post('/register', [IndexController::class, 'register']);
+	Route::controller(UserController::class)->group(function () {
+		Route::get('user/{id}', 'show');
+	});
 
-Route::get('/login_page', [IndexController::class, 'loginPage'])->name('login');
-Route::post('/login', [IndexController::class, 'login']);
-Route::post('/logout', [IndexController::class, 'logout']);
+	Route::prefix('leave')->controller(LeaveController::class)->group(function () {
+		Route::post('/', 'create');
+		Route::delete('{id}', 'delete');
+		Route::patch('{id}', 'update');
+	});
 
-Route::get('/user/{id}', [UserController::class, 'get'])->middleware('auth');
+});
 
-Route::post('/leave', [LeaveController::class, 'create'])->middleware('auth');
-Route::delete('/leave/{id}', [LeaveController::class, 'delete'])->middleware('auth');
-Route::patch('/leave/{id}', [LeaveController::class, 'update'])->middleware('auth');
+Route::controller(IndexController::class)->group(function () {
+	Route::get('login_page', 'loginPage')->name('login');
+	Route::post('login', 'login');
+
+	Route::get('signup', 'signup');
+	Route::post('register', 'register');
+
+});

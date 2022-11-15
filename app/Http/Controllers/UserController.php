@@ -24,7 +24,7 @@ class UserController extends Controller
         $this->AccountService = $accountService;
     }
 
-    public function get(Request $request, $id)
+    public function show(Request $request, $id)
     {
 
         $userName = Auth::user()->name;
@@ -32,5 +32,6 @@ class UserController extends Controller
 
         return view('userInfo', ['name' => $userName, 'email' => $email,]);
     }
+
 
 }
