@@ -10,9 +10,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use \App\Http\Requests\LogInPostRequest;
-use \App\Http\Requests\registerPostRequest;
 use \App\Http\Services\AccountService;
 use \App\Http\Services\CalendarService;
 
@@ -41,16 +38,4 @@ class IndexController extends Controller
         return view('index', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
     }
 
-    public function signup(Request $request)
-    {
-        return view('signUp');
-    }
-
-    public function register(RegisterPostRequest $request)
-    {
-        $formData = $request->safe()->only(['name', 'email', 'password']);
-        $formData['password'] = Hash::make($formData['password']);
-
-        return $this->AccountService->register($formData);
-    }
 }

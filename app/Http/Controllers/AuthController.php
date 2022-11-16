@@ -23,7 +23,7 @@ class AuthController extends Controller
         $this->AccountService = $accountService;
     }
 
-    public function show(Request $request)
+    public function index(Request $request)
     {
         return view('login');
     }

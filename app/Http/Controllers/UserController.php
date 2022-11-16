@@ -36,12 +36,12 @@ class UserController extends Controller
         return view('userInfo', ['name' => $userName, 'email' => $email,]);
     }
 
-    public function store(Request $request)
+    public function create(Request $request)
     {
         return view('signUp');
     }
 
-    public function create(RegisterPostRequest $request)
+    public function store(RegisterPostRequest $request)
     {
         $formData = $request->safe()->only(['name', 'email', 'password']);
         $formData['password'] = Hash::make($formData['password']);

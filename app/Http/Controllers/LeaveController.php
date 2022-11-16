@@ -22,7 +22,7 @@ class LeaveController extends Controller
         $this->LeaveRepository = $leaveRepository;
     }
 
-    public function create(LeavePostRequest $request)
+    public function store(LeavePostRequest $request)
     {
 
         $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
@@ -32,7 +32,7 @@ class LeaveController extends Controller
         return redirect()->back()->with('msg', 'add success');
     }
 
-    public function delete(Request $request, $id)
+    public function destroy(Request $request, $id)
     {
         $this->LeaveRepository->delete($id);
 

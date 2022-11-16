@@ -106,7 +106,7 @@ class CalendarService
         return $period;
     }
 
-    private function checkSchedule($targetYear, array $holidays)
+    private function checkSchedule($targetYear, array $holidays): bool
     {
         $hasTargetSchedule = false;
 

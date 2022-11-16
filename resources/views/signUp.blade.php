@@ -3,7 +3,7 @@
 @section('content')
     <div class="container my-5">
         <h3 class="h3">sign up</h3>
-        <form id="form-register" action="/user/create" method="POST">
+        <form id="form-register" action="/user" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label"><span class="text-danger">*</span>Email</label>

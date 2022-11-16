@@ -32,19 +32,19 @@ Route::middleware(['auth'])->group(function () {
 	});
 
 	Route::controller(LeaveController::class)->group(function () {
-		Route::post('leave', 'create');
-		Route::delete('leave/{id}', 'delete');
+		Route::post('leave', 'store');
+		Route::delete('leave/{id}', 'destroy');
 		Route::patch('leave/{id}', 'update');
 	});
 
 });
 
 Route::controller(AuthController::class)->group(function () {
-	Route::get('login', 'show')->name('login');
+	Route::get('login', 'index')->name('login');
 	Route::post('login', 'login');
 });
 
 Route::controller(UserController::class)->group(function () {
-    Route::get('signup', 'store');
-	Route::post('user/create', 'create');
+    Route::get('signup', 'create');
+	Route::post('user', 'store');
 });
