@@ -39,15 +39,6 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-// Route::controller(IndexController::class)->group(function () {
-// 	Route::get('login_page', 'loginPage')->name('login');
-// 	Route::post('login', 'login');
-
-// 	Route::get('signup', 'signup');
-// 	Route::post('register', 'register');
-
-// });
-
 Route::controller(AuthController::class)->group(function () {
 	Route::get('login', 'show')->name('login');
 	Route::post('login', 'login');

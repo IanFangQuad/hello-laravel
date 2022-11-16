@@ -25,14 +25,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        // Auth::viaRequest('login', function ($request) {
-
-        //     if (!$request->session()->get('userID')) {
-        //         return null;
-        //     }
-        //     $id = $request->session()->get('userID');
-        //     return \App\Models\Member::where('id', $id)->first();
-        // });
     }
 }
