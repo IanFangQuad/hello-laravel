@@ -3,6 +3,7 @@
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,28 +18,42 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::middleware(['auth'])->group(function () {
+
 	Route::controller(IndexController::class)->group(function () {
-		Route::post('logout', 'logout');
         Route::get('/', 'index')->name('index');
 	});
+
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('logout', 'logout');
+    });
 
 	Route::controller(UserController::class)->group(function () {
 		Route::get('user/{id}', 'show');
 	});
 
-	Route::prefix('leave')->controller(LeaveController::class)->group(function () {
-		Route::post('/', 'create');
-		Route::delete('{id}', 'delete');
-		Route::patch('{id}', 'update');
+	Route::controller(LeaveController::class)->group(function () {
+		Route::post('leave', 'create');
+		Route::delete('leave/{id}', 'delete');
+		Route::patch('leave/{id}', 'update');
 	});
 
 });
 
-Route::controller(IndexController::class)->group(function () {
-	Route::get('login_page', 'loginPage')->name('login');
+// Route::controller(IndexController::class)->group(function () {
+// 	Route::get('login_page', 'loginPage')->name('login');
+// 	Route::post('login', 'login');
+
+// 	Route::get('signup', 'signup');
+// 	Route::post('register', 'register');
+
+// });
+
+Route::controller(AuthController::class)->group(function () {
+	Route::get('login', 'show')->name('login');
 	Route::post('login', 'login');
+});
 
-	Route::get('signup', 'signup');
-	Route::post('register', 'register');
-
+Route::controller(UserController::class)->group(function () {
+    Route::get('signup', 'store');
+	Route::post('user/create', 'create');
 });

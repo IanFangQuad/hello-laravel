@@ -41,28 +41,6 @@ class IndexController extends Controller
         return view('index', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
     }
 
-    public function loginPage(Request $request)
-    {
-        return view('login');
-    }
-
-    public function login(LogInPostRequest $request)
-    {
-        $credentials = $request->safe()->only(['email', 'password']);
-        return $this->AccountService->login($credentials);
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/login_page');
-    }
-
     public function signup(Request $request)
     {
         return view('signUp');

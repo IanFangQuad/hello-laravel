@@ -3,7 +3,7 @@
 @section('content')
     <div class="container my-5">
         <h3 class="h3">sign up</h3>
-        <form id="form-register" action="/register" method="POST">
+        <form id="form-register" action="/user/create" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label"><span class="text-danger">*</span>Email</label>
@@ -35,7 +35,10 @@
                     </div>
                 </div>
                 <div>
-                    <button id="btn-register" type="submit" class="btn btn-primary mx-1">register</button>
+                    <a href="/login" class="text-decoration-none">
+                        <button id="" type="button" class="btn btn-secondary mx-1">log in</button>
+                    </a>
+                    <button id="btn-register" type="submit" class="btn btn-primary mx-1">sign up</button>
                 </div>
             </div>
         </form>
@@ -44,7 +47,7 @@
 @section('script')
     <script>
         $(function() {
-            modalMsg('modal', 'modal-body', '/login_page');
+            modalMsg('modal', 'modal-body', '/login');
         });
     </script>
 @endsection
