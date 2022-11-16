@@ -11,7 +11,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use \App\Http\Services\AccountService;
+use \App\Services\AccountService;
 use \App\Http\Requests\registerPostRequest;
 
 

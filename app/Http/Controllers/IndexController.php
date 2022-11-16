@@ -10,8 +10,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use \App\Http\Services\AccountService;
-use \App\Http\Services\CalendarService;
+use \App\Services\AccountService;
+use \App\Services\CalendarService;
 
 class IndexController extends Controller
 {

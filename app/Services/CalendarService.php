@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
