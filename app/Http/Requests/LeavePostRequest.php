@@ -93,7 +93,7 @@ class LeavePostRequest extends FormRequest
                 array_push($range, $date);
             }
         }
-        $afternoon = Carbon::parse($today . ' ' . '12:00:00');
+        $afternoon = Carbon::parse($today . ' ' . '13:00:00');
         $startTime = Carbon::parse($today . ' ' . $startTime);
         $endTime = Carbon::parse($today . ' ' . $endTime);
         $days = 0;

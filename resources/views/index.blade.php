@@ -175,7 +175,7 @@
                                     value="{{ old('start-date') }}" id="start-date">
                                 <select class="form-control ms-2 need-calc" name="start-time" id="start-time"
                                     value="{{ old('start-time') }}">
-                                    <option value="09:00:00">09:00</option>
+                                    <option value="09:00:00" selected>09:00</option>
                                     {{-- <option value="10:00:00">10:00</option>
                                     <option value="11:00:00">11:00</option>
                                     <option value="12:00:00">12:00</option>
@@ -316,7 +316,7 @@
                 }
 
                 if (startDate == endDate) {
-                    const afternoon = moment(startDate + ' 12:00:00', "YYYY-MM-DD hh:mm:ss");
+                    const afternoon = moment(startDate + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
                     const isStartFromMorning = (afternoon.diff(startStamp) > 0);
                     const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
                     const isLeaveInSameBlock = !(isStartFromMorning && isEndAfterNoon);
@@ -352,7 +352,7 @@
 
                     let date = range[i];
 
-                    const afternoon = moment(date + ' 12:00:00', "YYYY-MM-DD hh:mm:ss");
+                    const afternoon = moment(date + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
 
                     if (i == 0) {
                         const isStartFromMorning = (afternoon.diff(startStamp) > 0);
@@ -466,7 +466,7 @@
 
         function resetValue() {
             $("#start-time").val('09:00:00');
-            $("#end-time").val('09:00:00');
+            $("#end-time").val('13:00:00');
             $("#type").val('');
             $("#description").val('');
         }
