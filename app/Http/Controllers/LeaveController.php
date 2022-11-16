@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Requests\LeavePostRequest;
 use \App\Repositories\LeaveRepository;
+use \App\Exceptions\PostException;
 
 class LeaveController extends Controller
 {
@@ -27,14 +28,18 @@ class LeaveController extends Controller
 
         $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
 
-        $this->LeaveRepository->create($formData);
+        $status = $this->LeaveRepository->create($formData);
+
+        throw_if(!$status, new PostException);
 
         return redirect()->back()->with('msg', 'add success');
     }
 
     public function destroy(Request $request, $id)
     {
-        $this->LeaveRepository->delete($id);
+        $status = $this->LeaveRepository->delete($id);
+
+        throw_if(!$status, new PostException);
 
         return redirect()->back()->with('msg', 'delete success');
     }
@@ -43,7 +48,9 @@ class LeaveController extends Controller
     {
         $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
 
-        $this->LeaveRepository->update($id, $formData);
+        $status = $this->LeaveRepository->update($id, $formData);
+
+        throw_if(!$status, new PostException);
 
         return redirect()->back()->with('msg', 'update success');
     }
