@@ -6,7 +6,8 @@
             <div class="col d-flex justify-content-between align-items-end">
                 <h2 class="m-0">index</h2>
                 <div class="d-flex align-items-end">
-                    <span class="mx-1">hello, <a href="/user/{{ $id }}">{{ $name }}</a></span>
+                    <span class="mx-1" id="user" data-id="{{ $id }}">hello, <a
+                            href="/user/{{ $id }}">{{ $name }}</a></span>
                     <form action="/logout" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-sm" id="btn-logout">log out</button>
@@ -101,8 +102,15 @@
                                                     class="d-flex align-items-center">
                                                     @method('DELETE')
                                                     @csrf
-                                                    <span class="material-symbols-outlined mx-1 btn-delete"
-                                                        data-id="{{ $event['id'] }}">
+                                                    @php
+                                                        $isAuthor = $id == $event['member']['id'];
+                                                    @endphp
+                                                    <span @class([
+                                                        'material-symbols-outlined',
+                                                        'mx-1',
+                                                        'btn-delete',
+                                                        'd-none' => !$isAuthor,
+                                                    ]) data-id="{{ $event['id'] }}">
                                                         delete
                                                     </span>
                                                 </form>
@@ -154,8 +162,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="type" class="form-label"><span class="text-danger required">*</span>Type</label>
-                            <select class="form-control need-calc" name="type" id="type"
-                                value="">
+                            <select class="form-control need-calc" name="type" id="type" value="">
                                 <option value="" disabled selected>選擇假別</option>
                                 <option value="annual">特休</option>
                                 <option value="comp">補休</option>
@@ -384,6 +391,10 @@
 
                 $("#modal-title").text('Event detail');
                 $("#error-msg").empty();
+
+                const eventOwner = data.member;
+                const currentUser = $("#user").data('id');
+                (currentUser == eventOwner) ? $("#btn-edit").removeClass('d-none') : $("#btn-edit").addClass('d-none');
 
                 filledWithData(data);
                 toReadOnlyMode();
