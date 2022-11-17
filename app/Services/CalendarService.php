@@ -18,7 +18,7 @@ class CalendarService
         $this->HolidayRepository = $holidayRepository;
     }
 
-    public function getSchedules($parms): Collection
+    public function getSchedules($parms): array
     {
         $year = isset($parms['y']) ? $parms['y'] : Carbon::now()->format('Y');
         $month = isset($parms['m']) ? $parms['m'] : Carbon::now()->format('m');
@@ -40,11 +40,11 @@ class CalendarService
         $period = $this->attachHolidays($period, $holidays);
         $period = $this->attachLeaves($period);
 
-        $calendar = collect([
+        $calendar = [
             'query' => $target,
             'dates' => $period,
             'holidays' => $holidays,
-        ]);
+        ];
 
         return $calendar;
     }
