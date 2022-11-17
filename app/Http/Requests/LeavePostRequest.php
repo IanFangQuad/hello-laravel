@@ -63,6 +63,7 @@ class LeavePostRequest extends FormRequest
             'start' => '',
             'end' => '',
             'member_id' => '',
+            'hours' => '',
         ];
 
     }
