@@ -27,18 +27,15 @@ class CalendarService
         $startOfMonth = $target->copy()->firstOfMonth()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
         $endOfMonth = $target->copy()->lastOfMonth()->endOfWeek(Carbon::SATURDAY)->format('Y-m-d');
         // get holidays for front client calculate leave hours
-        $start = Carbon::parse("{$year}-01-01")->firstOfYear()->format('Y-m-d');
+        $start = Carbon::parse($year)->firstOfYear()->format('Y-m-d');
         $end = Carbon::parse($year)->add(1, 'year')->lastOfYear()->format('Y-m-d');
 
-        // $holidays = $this->HolidayRepository->getByPeriod($start, $end)->toArray();
         $holidays = $this->HolidayRepository->getByPeriod($start, $end)->keyBy('date');
         $hasTargetSchedule = $this->checkSchedule($year, $holidays);
         $holidays = $hasTargetSchedule ? $holidays : collect();
 
         $period = Carbon::parse($startOfMonth)->daysUntil($endOfMonth);
-        $period = $this->attachProps($period);
-        $period = $this->attachHolidays($period, $holidays);
-        $period = $this->attachLeaves($period);
+        $period = $this->attachLeaves($period, $holidays);
 
         $calendar = [
             'query' => $target,
@@ -49,61 +46,42 @@ class CalendarService
         return $calendar;
     }
 
-    private function attachProps(CarbonPeriod $period): Collection
+    private function attachLeaves(CarbonPeriod $period, Collection $holidays): array
     {
-        $rearrange = collect();
 
-        foreach ($period as $index => $date) {
+        $rearrange = [];
 
-            $rearrange->push((object) [
-                'date' => $date,
-                'dayoff' => false,
-                'annotation' => '',
-            ]);
-        }
-
-        return $rearrange;
-    }
-
-    private function attachHolidays(Collection $period, Collection $holidays): Collection
-    {
-        foreach ($period as $index => $date) {
-
-            $dateString = $date->date->format('Y-m-d');
-
-            if ($holidays->has($dateString)) {
-                $dayoff = ($holidays->get($dateString)->dayoff == 1) ? true : false;
-                $annotation = $holidays->get($dateString)->annotation;
-                $period->get($index)->dayoff = $dayoff;
-                $period->get($index)->annotation = $annotation;
-            }
-
-        }
-        return $period;
-    }
-
-    private function attachLeaves(Collection $period): Collection
-    {
-        $startOfMonth = $period->first()->date->format('Y-m-d');
-        $endOfMonth = $period->last()->date->format('Y-m-d');
-
+        $startOfMonth = $period->startDate->format('Y-m-d');
+        $endOfMonth = $period->endDate->format('Y-m-d');
         $leaves = $this->LeaveRepository->getByPeriod($startOfMonth, $endOfMonth);
         $leaves = $this->leavesBydates($leaves);
 
         foreach ($period as $index => $date) {
 
-            $dateString = $date->date->format('Y-m-d');
+            $dateString = $date->format('Y-m-d');
+            $dayoff = false;
+            $annotation = '';
 
-            if (!$leaves->has($dateString) || $date->dayoff) {
-                $period->get($index)->events = collect();
-                continue;
+            if ($holidays->has($dateString)) {
+                $dayoff = ($holidays->get($dateString)->dayoff == 1) ? true : false;
+                $annotation = $holidays->get($dateString)->annotation;
             }
 
-            $period->get($index)->events = $leaves->get($dateString);
+            $events = [];
 
+            if ($leaves->has($dateString) && !$dayoff) {
+                $events = $leaves->get($dateString);
+            }
+
+            $rearrange[] = [
+                'date' => $date,
+                'dayoff' => $dayoff,
+                'annotation' => $annotation,
+                'events' => $events,
+            ];
         }
 
-        return $period;
+        return $rearrange;
     }
 
     private function checkSchedule($targetYear, Collection $holidays): bool

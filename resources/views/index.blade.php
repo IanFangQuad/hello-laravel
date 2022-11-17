@@ -47,9 +47,9 @@
                     @else
                         @foreach ($calendar['dates'] as $date)
                             @php
-                                $isCurrnetMonth = $date->date->format('m') == $calendar['query']->format('m');
-                                $isTextRed = $date->dayoff;
-                                $isToday = $date->date->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d');
+                                $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
+                                $isTextRed = $date['dayoff'];
+                                $isToday = $date['date']->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d');
                             @endphp
                             <div @class([
                                 'calendar-cell',
@@ -59,9 +59,9 @@
                                 'text-danger' => $isTextRed,
                                 'grayscale' => !$isCurrnetMonth,
                                 'today' => $isToday,
-                            ]) data-date="{{ $date->date->format('Y-m-d') }}">
+                            ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                 <div class="row w-100">
-                                    <div class="col-auto">{{ $date->date->format('d') }}</div>
+                                    <div class="col-auto">{{ $date['date']->format('d') }}</div>
                                     <div @class([
                                         'col',
                                         'p-0',
@@ -72,11 +72,11 @@
                                         'calendar-annotation',
                                         'text-danger' => $isTextRed,
                                     ])>
-                                        {{ $date->annotation }}
+                                        {{ $date['annotation'] }}
                                     </div>
                                 </div>
                                 <div class="tag-wrapper">
-                                    @foreach ($date->events as $event)
+                                    @foreach ($date['events'] as $event)
                                         <div class="border border-1 rounded event-tag my-1 mx-2 ">
                                             <div class="d-flex">
                                                 <div class="col-auto p-0 mx-1 fw-bold text-dark">
@@ -113,15 +113,15 @@
 
                                 @php
                                     $now = Illuminate\Support\Carbon::now();
-                                    $canAdd = $now->diffInDays($date->date, false) >= 0;
-                                    $canAdd = $date->dayoff ? false : $canAdd;
+                                    $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                                    $canAdd = $date['dayoff'] ? false : $canAdd;
                                 @endphp
                                 <span @class([
                                     'material-symbols-outlined',
                                     'calendar-add',
                                     'fs-3',
                                     'd-none' => !$canAdd,
-                                ]) data-date="{{ $date->date->format('Y-m-d') }}">
+                                ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                     add_circle
                                 </span>
                             </div>
