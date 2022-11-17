@@ -177,15 +177,7 @@
                                 <select class="form-control ms-2 need-calc" name="start-time" id="start-time"
                                     value="{{ old('start-time') }}">
                                     <option value="09:00:00" selected>09:00</option>
-                                    {{-- <option value="10:00:00">10:00</option>
-                                    <option value="11:00:00">11:00</option>
-                                    <option value="12:00:00">12:00</option>
-                                    <option value="13:00:00">13:00</option> --}}
                                     <option value="14:00:00">14:00</option>
-                                    {{-- <option value="15:00:00">15:00</option>
-                                    <option value="16:00:00">16:00</option>
-                                    <option value="17:00:00">17:00</option>
-                                    <option value="18:00:00">18:00</option> --}}
                                 </select>
                             </div>
                         </div>
@@ -197,15 +189,7 @@
                                     value="{{ old('end-date') }}" id="end-date">
                                 <select class="form-control ms-2 need-calc" name="end-time" id="end-time"
                                     value="{{ old('end-time') }}">
-                                    {{-- <option value="09:00:00">09:00</option>
-                                    <option value="10:00:00">10:00</option>
-                                    <option value="11:00:00">11:00</option>
-                                    <option value="12:00:00">12:00</option> --}}
                                     <option value="13:00:00">13:00</option>
-                                    {{-- <option value="14:00:00">14:00</option>
-                                    <option value="15:00:00">15:00</option>
-                                    <option value="16:00:00">16:00</option>
-                                    <option value="17:00:00">17:00</option> --}}
                                     <option value="18:00:00">18:00</option>
                                 </select>
                             </div>
