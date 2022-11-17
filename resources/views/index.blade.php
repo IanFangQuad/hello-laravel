@@ -317,7 +317,6 @@
                         range.push(date);
                     }
                 }
-                console.log(range)
 
                 let lastIndex = range.length - 1;
 
