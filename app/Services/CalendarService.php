@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use \App\Repositories\HolidayRepository;
 use \App\Repositories\LeaveRepository;
+use \App\Enums\LeaveType;
 
 class CalendarService
 {
@@ -104,6 +105,8 @@ class CalendarService
         $leavesReform = collect();
 
         foreach ($leaves as $leave) {
+            $type = LeaveType::fromKey($leave->type)->value;
+            $leave->type = $type;
             $start = $leave->start;
             $end = $leave->end;
 
