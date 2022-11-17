@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use \App\Helper\Helper;
 use \App\Repositories\HolidayRepository;
 use \App\Rules\GreaterThanToday;
 
@@ -81,15 +80,14 @@ class LeavePostRequest extends FormRequest
         $startTime = Carbon::parse($stratDatetime)->format('H:i:s');
         $endTime = Carbon::parse($endDateTime)->format('H:i:s');
 
-        $holidays = $this->HolidayRepository->getByPeriod($stratDatetime, $endDateTime)->toArray();
-        $holidays = Helper::replaceIndexByDate($holidays);
+        $holidays = $this->HolidayRepository->getByPeriod($stratDatetime, $endDateTime)->keyBy('date');
 
         $range = [];
         $period = Carbon::parse($stratDatetime)->daysUntil($endDateTime);
 
         foreach ($period as $date) {
             $date = $date->format('Y-m-d');
-            if (!array_key_exists($date, $holidays)) {
+            if (!$holidays->has($date)) {
                 array_push($range, $date);
             }
         }
@@ -103,6 +101,13 @@ class LeavePostRequest extends FormRequest
 
             if ($index == 0) {
                 $isStartFromMorning = ($afternoon->copy()->diffInHours($startTime->copy(), false)) < 0;
+
+                if ($lastIndex == 0) {
+                    $isEndAfternoon = ($afternoon->copy()->diffInHours($endTime->copy(), false)) > 0;
+                    $days += $isEndAfternoon ? 1 : 0.5;
+                    continue;
+                }
+
                 $days += $isStartFromMorning ? 1 : 0.5;
                 continue;
             }

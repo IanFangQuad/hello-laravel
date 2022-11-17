@@ -98,10 +98,10 @@
 }
 
 .today{
-    background-color: rgba(33, 96, 231, 0.2);
+    background-color: rgba(139, 231, 33, 0.15);
     border-radius: 2%;
 }
 
 .today.calendar-cell:not(.calendar-title):hover {
-    background-color: rgba(33, 96, 231, 0.1);
+    background-color: rgba(139, 231, 33, 0.1);
 }

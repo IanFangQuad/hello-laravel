@@ -18,14 +18,14 @@
         <div class="row my-3">
             <div class="col-12 my-2 fw-bold d-flex align-items-center">
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar['query']->copy()->subMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->subMonths(1)->format('m') }}">
+                    href="/?y={{ $calendar->get('query')->copy()->subMonths(1)->format('Y') }}&m={{ $calendar->get('query')->copy()->subMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_left
                     </span>
                 </a>
-                <h3 class="m-0">{{ $calendar['query']->copy()->format('Y / m F') }}</h3>
+                <h3 class="m-0">{{ $calendar->get('query')->copy()->format('Y / m F') }}</h3>
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar['query']->copy()->addMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->addMonths(1)->format('m') }}">
+                    href="/?y={{ $calendar->get('query')->copy()->addMonths(1)->format('Y') }}&m={{ $calendar->get('query')->copy()->addMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_right
                     </span>
@@ -40,16 +40,16 @@
                     <div class="calendar-cell calendar-title">Thursday</div>
                     <div class="calendar-cell calendar-title">Friday</div>
                     <div class="calendar-cell calendar-title">Saturday</div>
-                    @if (empty($calendar['holidays']))
+                    @if ($calendar->get('holidays')->isEmpty())
                         <div class="col-12 p-5 d-felx align-items-center justify-content-center text-center fs-2">The
                             schedule of year you
                             pick is not ready yet</div>
                     @else
-                        @foreach ($calendar['dates'] as $date)
+                        @foreach ($calendar->get('dates') as $date)
                             @php
-                                $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
-                                $isTextRed = $date['dayoff'];
-                                $isToday = ($date['date']->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d'));
+                                $isCurrnetMonth = $date->date->format('m') == $calendar->get('query')->format('m');
+                                $isTextRed = $date->dayoff;
+                                $isToday = ($date->date->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d'));
                             @endphp
                             <div @class([
                                 'calendar-cell',
@@ -59,9 +59,9 @@
                                 'text-danger' => $isTextRed,
                                 'grayscale' => !$isCurrnetMonth,
                                 'today' => $isToday,
-                            ]) data-date="{{ $date['date']->format('Y-m-d') }}">
+                            ]) data-date="{{ $date->date->format('Y-m-d') }}">
                                 <div class="row w-100">
-                                    <div class="col-auto">{{ $date['date']->format('d') }}</div>
+                                    <div class="col-auto">{{ $date->date->format('d') }}</div>
                                     <div @class([
                                         'col',
                                         'p-0',
@@ -72,14 +72,14 @@
                                         'calendar-annotation',
                                         'text-danger' => $isTextRed,
                                     ])>
-                                        {{ $date['annotation'] }}
+                                        {{ $date->annotation }}
                                     </div>
                                 </div>
                                 <div class="tag-wrapper">
-                                    @foreach ($date['events'] as $event)
+                                    @foreach ($date->events as $event)
                                         <div class="border border-1 rounded event-tag my-1 mx-2 ">
                                             <div class="d-flex">
-                                                <div class="col-auto p-0 mx-1 fw-bold">{{ $event['member']['name'] }}</div>
+                                                <div class="col-auto p-0 mx-1 fw-bold text-dark">{{ $event['member']['name'] }}</div>
                                                 <div class="col-auto p-0"><span
                                                         class="badge bg-warning text-dark">{{ $event['type'] }}</span>
                                                 </div>
@@ -112,14 +112,15 @@
 
                                 @php
                                     $now = Illuminate\Support\Carbon::now();
-                                    $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                                    $canAdd = $now->diffInDays($date->date, false) >= 0;
+                                    $canAdd = $date->dayoff ? false : $canAdd;
                                 @endphp
                                 <span @class([
                                     'material-symbols-outlined',
                                     'calendar-add',
                                     'fs-3',
                                     'd-none' => !$canAdd,
-                                ]) data-date="{{ $date['date']->format('Y-m-d') }}">
+                                ]) data-date="{{ $date->date->format('Y-m-d') }}">
                                     add_circle
                                 </span>
                             </div>
@@ -253,7 +254,7 @@
     </div>
     <!-- form Modal -->
 
-    <div id="data" class="d-none" data-holidays="{{ json_encode($calendar['holidays']) }}"></div>
+    <div id="data" class="d-none" data-holidays="{{ json_encode($calendar->get('holidays')) }}"></div>
 
 @endsection
 @section('script')
