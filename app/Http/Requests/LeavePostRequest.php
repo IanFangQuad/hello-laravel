@@ -82,6 +82,9 @@ class LeavePostRequest extends FormRequest
         $endTime = Carbon::parse($endDateTime)->format('H:i:s');
 
         $holidays = $this->HolidayRepository->getByPeriod($stratDatetime, $endDateTime)->keyBy('date');
+        $holidays = $holidays->filter(function ($value) {
+            return $value->dayoff;
+        });
 
         $range = [];
         $period = Carbon::parse($stratDatetime)->daysUntil($endDateTime);
