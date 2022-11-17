@@ -105,7 +105,7 @@ class CalendarService
         $leavesReform = collect();
 
         foreach ($leaves as $leave) {
-            $type = LeaveType::fromKey($leave->type)->value;
+            $type = LeaveType::fromKey($leave->type);
             $leave->type = $type;
             $start = $leave->start;
             $end = $leave->end;

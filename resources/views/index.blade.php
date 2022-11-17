@@ -90,7 +90,7 @@
                                             <div class="tag-tool my-1">
                                                 <span class="material-symbols-outlined mx-1 btn-detail"
                                                     data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
-                                                    data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
+                                                    data-end="{{ $event['end'] }}" data-type="{{ $event['type']->key }}"
                                                     data-approval="{{ $event['approval'] }}"
                                                     data-hours="{{ $event['hours'] }}"
                                                     data-member="{{ $event['member']['id'] }}"
