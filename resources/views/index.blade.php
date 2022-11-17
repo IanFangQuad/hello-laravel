@@ -49,7 +49,7 @@
                             @php
                                 $isCurrnetMonth = $date->date->format('m') == $calendar['query']->format('m');
                                 $isTextRed = $date->dayoff;
-                                $isToday = ($date->date->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d'));
+                                $isToday = $date->date->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d');
                             @endphp
                             <div @class([
                                 'calendar-cell',
@@ -79,7 +79,8 @@
                                     @foreach ($date->events as $event)
                                         <div class="border border-1 rounded event-tag my-1 mx-2 ">
                                             <div class="d-flex">
-                                                <div class="col-auto p-0 mx-1 fw-bold text-dark">{{ $event['member']['name'] }}</div>
+                                                <div class="col-auto p-0 mx-1 fw-bold text-dark">
+                                                    {{ $event['member']['name'] }}</div>
                                                 <div class="col-auto p-0"><span
                                                         class="badge bg-warning text-dark">{{ $event['type'] }}</span>
                                                 </div>
@@ -154,7 +155,7 @@
                         <div class="mb-3">
                             <label for="type" class="form-label"><span class="text-danger required">*</span>Type</label>
                             <select class="form-control need-calc" name="type" id="type"
-                                value="{{ old('type') }}">
+                                value="">
                                 <option value="" disabled selected>選擇假別</option>
                                 <option value="annual">特休</option>
                                 <option value="comp">補休</option>
@@ -175,7 +176,7 @@
                                 <input class="form-control need-calc" type="date" name="start-date"
                                     value="{{ old('start-date') }}" id="start-date">
                                 <select class="form-control ms-2 need-calc" name="start-time" id="start-time"
-                                    value="{{ old('start-time') }}">
+                                    value="">
                                     <option value="09:00:00" selected>09:00</option>
                                     <option value="14:00:00">14:00</option>
                                 </select>
@@ -188,7 +189,7 @@
                                 <input class="form-control need-calc" type="date" name="end-date"
                                     value="{{ old('end-date') }}" id="end-date">
                                 <select class="form-control ms-2 need-calc" name="end-time" id="end-time"
-                                    value="{{ old('end-time') }}">
+                                    value="">
                                     <option value="13:00:00">13:00</option>
                                     <option value="18:00:00">18:00</option>
                                 </select>
@@ -300,22 +301,10 @@
                     return;
                 }
 
-                if (startDate == endDate) {
-                    const afternoon = moment(startDate + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
-                    const isStartFromMorning = (afternoon.diff(startStamp) > 0);
-                    const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
-                    const isLeaveInSameBlock = !(isStartFromMorning && isEndAfterNoon);
-
-                    leaveCount = isLeaveInSameBlock ? 0.5 : 1;
-                    let unit = 'day';
-                    let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
-                    $("#total").html(msg).removeClass('text-white');
-                    $("#hours").val(leaveCount * 24);
-                    $("#btn-submit").prop('disabled', false);
-                    return;
-                }
-
                 let dayoff = $("#data").data('holidays');
+                dayoff = Object.fromEntries(Object.entries(dayoff).filter(([key, value]) => {
+                    return value.dayoff == 1;
+                }));
 
                 let days = endStamp.diff(startStamp, 'days');
 
@@ -324,13 +313,12 @@
                 for (let i = 0; i <= days; i++) {
                     let clone = startStamp.clone();
                     let date = clone.add(i, 'days').format('YYYY-MM-DD');
-                    clone.subtract(i, 'days');
-                    range.push(date);
+                    if (!(date in dayoff)) {
+                        range.push(date);
+                    }
                 }
+                console.log(range)
 
-                range = range.filter(function(date, index) {
-                    return !(date in dayoff);
-                })
                 let lastIndex = range.length - 1;
 
                 for (let i = 0; i <= lastIndex; i++) {
@@ -340,6 +328,13 @@
                     const afternoon = moment(date + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
 
                     if (i == 0) {
+
+                        if (lastIndex == 0) {
+                            const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
+                            leaveCount += isEndAfterNoon ? 1 : 0.5;
+                            continue;
+                        }
+
                         const isStartFromMorning = (afternoon.diff(startStamp) > 0);
                         leaveCount += isStartFromMorning ? 1 : 0.5;
                         continue;
