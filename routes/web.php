@@ -4,6 +4,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AttendController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,12 @@ Route::middleware(['auth'])->group(function () {
 		Route::post('leave', 'store');
 		Route::delete('leave/{id}', 'destroy');
 		Route::patch('leave/{id}', 'update');
+	});
+
+    Route::controller(AttendController::class)->group(function () {
+        Route::get('attend', 'show');
+		Route::post('attend', 'store');
+		Route::patch('attend/{id}', 'update');
 	});
 
 });
