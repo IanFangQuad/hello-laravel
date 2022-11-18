@@ -19,20 +19,20 @@
     z-index: 20;
     background-color: rgb(250, 250, 250);
     top: 0;
-    left: -60px;
+    left: -65px;
     transition: .3s;
 }
 
 .toggle-icon {
     position: fixed;
-    top: calc(50% - 12px);
-    left: 10px;
+    left: 7px;
     z-index: 1;
     transition: .3s;
 }
 
 .toggle-icon label{
     cursor: pointer;
+    height: 100%;
 }
 
 .toggle-left{
@@ -48,7 +48,7 @@
 }
 
 #btn-toggle:checked~.toggle-icon{
-    left: 70px;
+    left: 73px;
 }
 
 #btn-toggle:checked~.sidebar-wrapper{

@@ -1,6 +1,6 @@
 <input class="d-none" type="checkbox" name="btn-toggle" id="btn-toggle">
-<div class="toggle-icon rounded d-flex align-items-center">
-    <label for="btn-toggle">
+<div class="toggle-icon rounded d-flex align-items-center vh-100">
+    <label for="btn-toggle" class=" d-flex align-items-center">
         <span class="material-symbols-outlined toggle-left">
             arrow_left
         </span>
