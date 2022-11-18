@@ -9,18 +9,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use \App\Http\Requests\LeavePostRequest;
 use \App\Repositories\LeaveRepository;
 use \App\Exceptions\PostException;
+use \App\Services\CalendarService;
 
 class LeaveController extends Controller
 {
 
     private $leaveRepository;
+    private $calendarService;
 
-    public function __construct(LeaveRepository $leaveRepository, )
+    public function __construct(LeaveRepository $leaveRepository, CalendarService $calendarService)
     {
         $this->LeaveRepository = $leaveRepository;
+        $this->CalendarService = $calendarService;
+    }
+
+    public function show(Request $request)
+    {
+        $userName = Auth::user()->name;
+        $email = Auth::user()->email;
+        $id = Auth::user()->id;
+
+        $dateParms = $request->query();
+        $calendar = $this->CalendarService->getSchedules($dateParms);
+
+        return view('leave', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
     }
 
     public function store(LeavePostRequest $request)

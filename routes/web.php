@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 	});
 
 	Route::controller(LeaveController::class)->group(function () {
+		Route::get('leave', 'show');
 		Route::post('leave', 'store');
 		Route::delete('leave/{id}', 'destroy');
 		Route::patch('leave/{id}', 'update');
