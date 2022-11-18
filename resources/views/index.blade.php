@@ -8,10 +8,28 @@
             </div>
         </div>
 
-        <div class="row my-3">
-            <div class="col d-flex justify-content-center clock my-5" id="clock">
+        <form action="/attend" method="POST">
+            @csrf
+            <div class="row mt-5 fs-3">
+                <div class="col d-flex justify-content-center" id="">
+                    <span class="mx-3">{{ Illuminate\Support\Carbon::now()->format('Y-m-d') }}</span>
+                    <span class="mx-5">{{ Illuminate\Support\Carbon::now()->format('l') }}</span>
+                </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center clock " id="clock">
+                </div>
+            </div>
+            <input type="text" name="date" id="date" class="d-none"
+                value="{{ Illuminate\Support\Carbon::now()->format('Y-m-d') }}">
+            <input type="text" name="time" id="time" class="d-none" value="">
+            <div class="row px-5 my-3 d-flex justify-content-center">
+                <div class="col-7 d-flex justify-content-center">
+                    <button type="submit" class="py-3 rounded w-100" id="btn-punch">Punch</button>
+                </div>
+            </div>
+        </form>
+
     </div>
 
 @endsection
@@ -32,8 +50,9 @@
             m = (m < 10) ? "0" + m : m;
             s = (s < 10) ? "0" + s : s;
 
-            var time = h + ":" + m + ":" + s;
-            $("#clock").text(time)
+            let time = h + ":" + m + ":" + s;
+            $("#clock").text(time);
+            $("#time").val(time);
 
             setTimeout(showTime, 1000);
         }
