@@ -18,8 +18,8 @@ return new class extends Migration
                 $table->id();
                 $table->integer('member_id');
                 $table->date('date');
-                $table->time('start_time');
-                $table->time('end_time');
+                $table->time('start_time')->nullable();
+                $table->time('end_time')->nullable();
                 $table->timestamps();
             });
         }

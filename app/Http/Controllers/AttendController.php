@@ -10,12 +10,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use \App\Http\Requests\AttendPostRequest;
+use \App\Services\PunchService;
 
 class AttendController extends Controller
 {
+    private $punchService;
 
-    public function __construct()
+    public function __construct(PunchService $punchService)
     {
+        $this->PunchService = $punchService;
     }
 
     public function show(Request $request)
@@ -23,8 +27,11 @@ class AttendController extends Controller
 
     }
 
-    public function store(Request $request)
+    public function store(AttendPostRequest $request)
     {
+        $formData = $request->safe()->only(['member_id', 'date', 'time']);
+
+        return $this->PunchService->punch($formData);
 
     }
 

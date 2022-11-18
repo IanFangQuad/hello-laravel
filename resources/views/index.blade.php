@@ -20,8 +20,6 @@
                 <div class="col d-flex justify-content-center clock " id="clock">
                 </div>
             </div>
-            <input type="text" name="date" id="date" class="d-none"
-                value="{{ Illuminate\Support\Carbon::now()->format('Y-m-d') }}">
             <input type="text" name="time" id="time" class="d-none" value="">
             <div class="row px-5 my-3 d-flex justify-content-center">
                 <div class="col-7 d-flex justify-content-center">
