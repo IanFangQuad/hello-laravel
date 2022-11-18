@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'index')
+@section('title', 'leave')
 @section('content')
     <div class="container my-2">
         <div class="row">
