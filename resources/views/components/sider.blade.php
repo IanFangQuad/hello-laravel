@@ -24,12 +24,22 @@
                 punch_clock
             </span>
         </a>
+        <div class="position-absolute text-nowrap sidebar-label rounded p-2">punch card</div>
     </div>
     <div class="position-relative my-2">
-        <a href="/leave" class="text-decoration-none text-dark d-flex align-items-center p-3 rounded sidebar-btn">
+        <a href="/attend" class="text-decoration-none text-dark d-flex align-items-center p-3 rounded sidebar-btn">
             <span class="material-symbols-outlined fs-3">
                 event_note
             </span>
         </a>
+        <div class="position-absolute text-nowrap sidebar-label rounded p-2">attendace</div>
+    </div>
+    <div class="position-relative my-2">
+        <a href="/leave" class="text-decoration-none text-dark d-flex align-items-center p-3 rounded sidebar-btn">
+            <span class="material-symbols-outlined fs-3">
+                event_busy
+            </span>
+        </a>
+        <div class="position-absolute text-nowrap sidebar-label rounded p-2">leaves</div>
     </div>
 </div>
