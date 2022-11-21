@@ -11,7 +11,7 @@
     justify-content: center;
 }
 
-.sidebar-btn:hover~.sidebar-label {
+#btn-toggle:checked~.sidebar-wrapper .sidebar-btn:hover~.sidebar-label {
     display: flex;
 }
 
