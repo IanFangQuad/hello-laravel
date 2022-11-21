@@ -28,14 +28,14 @@ class AttendController extends Controller
 
     public function store(AttendPostRequest $request)
     {
-        $formData = $request->safe()->only(['member_id', 'date', 'time']);
+        $formData = $request->safe()->only(['member_id', 'date', 'start_time']);
 
         return $this->PunchService->punchin($formData);
     }
 
     public function update(AttendPostRequest $request, $id)
     {
-        $formData = $request->safe()->only(['member_id', 'date', 'time']);
+        $formData = $request->safe()->only(['member_id', 'date', 'end_time']);
 
         return $this->PunchService->punchout($formData, $id);
     }

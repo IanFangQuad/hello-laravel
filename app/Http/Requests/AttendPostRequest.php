@@ -23,6 +23,8 @@ class AttendPostRequest extends FormRequest
         $this->merge([
             'member_id' => Auth::user()->id,
             'date' => Carbon::now()->format('Y-m-d'),
+            'start_time' => $this->input('time'),
+            'end_time' => $this->input('time'),
         ]);
     }
 
@@ -37,6 +39,8 @@ class AttendPostRequest extends FormRequest
             'date' => '',
             'time' => 'required',
             'member_id' => '',
+            'start_time' => '',
+            'end_time' => '',
         ];
     }
 

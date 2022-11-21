@@ -18,8 +18,6 @@ class PunchService
 
     public function punchin($parms)
     {
-        $parms['start_time'] = $parms['time'];
-        unset($parms['time']);
         $status = $this->AttendanceRepository->create($parms);
         throw_if(!$status, new PostException);
 
@@ -28,8 +26,6 @@ class PunchService
 
     public function punchout($parms, $id)
     {
-        $parms['end_time'] = $parms['time'];
-        unset($parms['time']);
         $status = $this->AttendanceRepository->update($id, $parms);
         throw_if(!$status, new PostException);
 
