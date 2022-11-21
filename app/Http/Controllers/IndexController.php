@@ -30,7 +30,7 @@ class IndexController extends Controller
             'date' => Carbon::now()->format('Y-m-d'),
         ];
 
-        $attendance = $this->PunchService->getRecord($params)->first();
+        $attendance = $this->PunchService->getRecord($params);
         // dd($attendance);
 
         return view('index', ['attendance' => $attendance]);

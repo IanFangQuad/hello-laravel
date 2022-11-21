@@ -51,13 +51,13 @@
                                 <td>{{ $attendance->date }}</td>
                                 <td>punch in</td>
                                 <td>{{ $attendance->start_time }}</td>
-                                <td></td>
+                                <td class="text-danger fw-bold">{{ $attendance->status['start_time'] }}</td>
                             </tr>
                             <tr>
                                 <td>{{ $attendance->date }}</td>
                                 <td>punch out</td>
                                 <td>{{ $attendance->end_time }}</td>
-                                <td></td>
+                                <td class="text-danger fw-bold">{{ $attendance->status['end_time'] }}</td>
                             </tr>
                         </tbody>
                     </table>
