@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use \App\Exceptions\PostException;
 use \App\Repositories\AttendanceRepository;
 
@@ -15,28 +16,36 @@ class PunchService
         $this->AttendanceRepository = $attendanceRepository;
     }
 
-    public function punch($parms)
+    public function punchin($parms)
     {
-        $member_id = $parms['member_id'];
-        $date = $parms['date'];
-        $record = $this->AttendanceRepository->getByMemberDate($member_id, $date);
+        $parms['start_time'] = $parms['time'];
+        unset($parms['time']);
+        $status = $this->AttendanceRepository->create($parms);
+        throw_if(!$status, new PostException);
 
-        if ($record->count() == 0) {
-            $parms['start_time'] = $parms['time'];
-            unset($parms['time']);
-            $status = $this->AttendanceRepository->create($parms);
-            throw_if(!$status, new PostException);
+        return redirect()->back()->with('msg', 'punch in success');
+    }
 
-            return redirect()->back()->with('msg', 'punch success');
-        }
-
-        $id = $record->first()->id;
+    public function punchout($parms, $id)
+    {
         $parms['end_time'] = $parms['time'];
         unset($parms['time']);
         $status = $this->AttendanceRepository->update($id, $parms);
         throw_if(!$status, new PostException);
 
-        return redirect()->back()->with('msg', 'punch success');
+        return redirect()->back()->with('msg', 'punch out success');
+    }
+
+    public function getRecord($parms)
+    {
+        $member_id = $parms['member_id'];
+        $date = $parms['date'];
+        $record = $this->AttendanceRepository->getByMemberDate($member_id, $date);
+        return $record;
+    }
+
+    public function attachStatus(Collection $record)
+    {
     }
 
 }

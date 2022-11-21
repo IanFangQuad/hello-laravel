@@ -9,33 +9,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use \App\Services\AccountService;
-use \App\Services\CalendarService;
+use \App\Services\PunchService;
 
 class IndexController extends Controller
 {
 
-    private $accountService;
-    private $calendarService;
+    private $punchService;
 
-    public function __construct(AccountService $accountService, CalendarService $calendarService)
+    public function __construct(PunchService $punchService)
     {
-        $this->AccountService = $accountService;
-        $this->CalendarService = $calendarService;
+        $this->PunchService = $punchService;
     }
 
     public function index(Request $request)
     {
+        $params = [
+            'member_id' => Auth::user()->id,
+            'date' => Carbon::now()->format('Y-m-d'),
+        ];
 
-        $userName = Auth::user()->name;
-        $email = Auth::user()->email;
-        $id = Auth::user()->id;
+        $attendance = $this->PunchService->getRecord($params)->first();
+        // dd($attendance);
 
-        $dateParms = $request->query();
-        $calendar = $this->CalendarService->getSchedules($dateParms);
-
-        return view('index', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
+        return view('index', ['attendance' => $attendance]);
     }
 
 }

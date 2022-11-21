@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use \App\Http\Requests\AttendPostRequest;
 use \App\Services\PunchService;
 
@@ -31,13 +30,14 @@ class AttendController extends Controller
     {
         $formData = $request->safe()->only(['member_id', 'date', 'time']);
 
-        return $this->PunchService->punch($formData);
-
+        return $this->PunchService->punchin($formData);
     }
 
-    public function update(Request $request, $id)
+    public function update(AttendPostRequest $request, $id)
     {
+        $formData = $request->safe()->only(['member_id', 'date', 'time']);
 
+        return $this->PunchService->punchout($formData, $id);
     }
 
 }
