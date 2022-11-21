@@ -71,6 +71,9 @@
                 if (text.includes('review')) {
                     $(element).removeClass('text-danger').addClass('text-warning');
                 }
+                if (text.includes('remember')) {
+                    $(element).removeClass('text-danger').addClass('text-warning');
+                }
                 if (text.includes('absent')) {
                     $(element).addClass('text-danger');
                 }

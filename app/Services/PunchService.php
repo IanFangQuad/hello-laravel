@@ -99,7 +99,7 @@ class PunchService
         });
 
         foreach ($period as $day) {
-            $isPast = (Carbon::now()->StartOfDay()->diffInDays($day, false) < 0);
+            $isPast = (Carbon::now()->StartOfDay()->diffInDays($day, false) <= 0);
             $date = $day->copy()->format('Y-m-d');
             $dayoff = ($holidays->has($date));
             if ($isPast && !$dayoff) {
@@ -112,10 +112,11 @@ class PunchService
         foreach ($range as $date) {
 
             $status = '';
+            $isToday = ($date == Carbon::now()->format('Y-m-d'));
 
             if (!$records->has($date)) { // the day doesn't have record, its status default to absent
 
-                $status = 'absent';
+                $status = $isToday ? 'remember to punch in' : 'absent';
                 $stuff = collect();
 
                 if ($leaves->has($date)) { // but that day have leave
@@ -143,7 +144,7 @@ class PunchService
             $end_time = $records[$date]->end_time;
 
             if (!$start_time || !$end_time) { // the day only have one record must be forget to punch
-                $status = 'forget to punch';
+                $status = $isToday ? 'remember to punch out' : 'forget to punch';
                 $records[$date]->status = $status;
                 continue;
             }
