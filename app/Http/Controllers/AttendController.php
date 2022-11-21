@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use \App\Http\Requests\AttendPostRequest;
 use \App\Services\PunchService;
 
@@ -23,7 +24,11 @@ class AttendController extends Controller
 
     public function show(Request $request)
     {
+        $member_id = Auth::user()->id;
+        $dateParms = $request->query();
+        $records = $this->PunchService->getList($member_id, $dateParms);
 
+        return view('attendance', ['attendances' => $records, 'query' => $dateParms]);
     }
 
     public function store(AttendPostRequest $request)

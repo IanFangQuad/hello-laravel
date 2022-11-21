@@ -1,8 +1,10 @@
 <?php
 namespace App\Helper;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use \App\Enums\LeaveType;
 
 class Helper
 {
@@ -35,4 +37,34 @@ class Helper
         return $fileNames;
     }
 
+    public static function leavesBydates(Collection $leaves): Collection
+    {
+        $leavesReform = collect();
+
+        foreach ($leaves as $leave) {
+            $type = LeaveType::fromKey($leave->type);
+            $leave->type = $type;
+            $start = $leave->start;
+            $end = $leave->end;
+
+            // to create time range of this leave
+            // ex: start = '2022-01-01' end = '2022-01-03' get  $periods = collect(['2022-01-01','2022-01-02','2022-01-03'])
+            $periods = collect();
+            $range = Carbon::parse($start)->daysUntil($end);
+
+            foreach ($range as $date) {
+                $periods->push($date->format('Y-m-d'));
+            }
+
+            foreach ($periods as $date) {
+                if (!$leavesReform->has($date)) {
+                    $leavesReform->put($date, collect()->push($leave));
+                } else {
+                    $leavesReform->get($date)->push($leave);
+                }
+            }
+        }
+
+        return $leavesReform;
+    }
 }

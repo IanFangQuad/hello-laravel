@@ -31,7 +31,6 @@ class IndexController extends Controller
         ];
 
         $attendance = $this->PunchService->getRecord($params);
-        // dd($attendance);
 
         return view('index', ['attendance' => $attendance]);
     }

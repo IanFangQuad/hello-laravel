@@ -5,9 +5,9 @@ namespace App\Services;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use \App\Helper\Helper;
 use \App\Repositories\HolidayRepository;
 use \App\Repositories\LeaveRepository;
-use \App\Enums\LeaveType;
 
 class CalendarService
 {
@@ -55,7 +55,7 @@ class CalendarService
         $startOfMonth = $period->startDate->format('Y-m-d');
         $endOfMonth = $period->endDate->format('Y-m-d');
         $leaves = $this->LeaveRepository->getByPeriod($startOfMonth, $endOfMonth);
-        $leaves = $this->leavesBydates($leaves);
+        $leaves = Helper::leavesBydates($leaves);
 
         foreach ($period as $index => $date) {
 
@@ -98,37 +98,6 @@ class CalendarService
         }
 
         return $hasTargetSchedule;
-    }
-
-    private function leavesBydates(Collection $leaves): Collection
-    {
-        $leavesReform = collect();
-
-        foreach ($leaves as $leave) {
-            $type = LeaveType::fromKey($leave->type);
-            $leave->type = $type;
-            $start = $leave->start;
-            $end = $leave->end;
-
-            // to create time range of this leave
-            // ex: start = '2022-01-01' end = '2022-01-03' get  $periods = collect(['2022-01-01','2022-01-02','2022-01-03'])
-            $periods = collect();
-            $range = Carbon::parse($start)->daysUntil($end);
-
-            foreach ($range as $date) {
-                $periods->push($date->format('Y-m-d'));
-            }
-
-            foreach ($periods as $date) {
-                if (!$leavesReform->has($date)) {
-                    $leavesReform->put($date, collect()->push($leave));
-                } else {
-                    $leavesReform->get($date)->push($leave);
-                }
-            }
-        }
-
-        return $leavesReform;
     }
 
 }
