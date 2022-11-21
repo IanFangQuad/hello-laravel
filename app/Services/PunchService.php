@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use \App\Exceptions\PostException;
 use \App\Repositories\AttendanceRepository;
 
@@ -60,10 +59,6 @@ class PunchService
         }
 
         return $record;
-    }
-
-    public function attachStatus(Collection $record)
-    {
     }
 
 }
