@@ -111,8 +111,8 @@ class PunchService
 
         foreach ($range as $date) {
 
-            $status = '';
             $isToday = ($date == Carbon::now()->format('Y-m-d'));
+            $status = $isToday ? 'remember to punch in' : '';
 
             if (!$records->has($date)) { // the day doesn't have record, its status default to absent
 
@@ -124,16 +124,17 @@ class PunchService
                     $isApproved = $leaves[$date][0]->approval;
                     $status = $isApproved ? $type . ' leave' : 'leave reviewing';
 
+                    $start = Carbon::parse($leaves[$date][0]->start);
                     $end = Carbon::parse($leaves[$date][0]->end);
                     $isEndDateOfLeave = ($end->copy()->format('Y-m-d') == $date);
-                    $isAllDayLeave = ($end->copy()->format('H:i:s') == '18:00:00');
+
+                    $usage = $isEndDateOfLeave ? $start->copy()->setMonth(1)->setDay(1)->diffInHours($end->copy()->setMonth(1)->setDay(1)) : 9;
+                    $isAllDayLeave = ($usage == 9);
 
                     if ($isEndDateOfLeave && !$isAllDayLeave) {
                         $status = $isApproved ? 'half day absent' : 'leave reviewing, but still have half day absent';
                     }
                 }
-
-                $status = $isToday ? 'remember to punch in' : $status;
 
                 $stuff->status = $status;
                 $stuff->start_time = '';
