@@ -1,6 +1,7 @@
 @extends('layouts.layout')
 @section('title', 'leave')
 @section('content')
+    @include('components.sider')
     <div class="container my-2">
         <div class="row">
             <div class="col d-flex justify-content-between align-items-end">
@@ -80,7 +81,7 @@
                                             </div>
                                             <div class="col p-0 mx-1">{{ $event['description'] }}</div>
                                             @if ($canReview && !$event['approval'])
-                                                <div class="text-danger fs-xs mx-1">wait for reviewing</div>
+                                                <div class="text-danger fw-bold fs-xs mx-1">wait for reviewing</div>
                                             @endif
                                             <div class="tag-tool my-1">
                                                 <span title="information" class="material-symbols-outlined mx-1 btn-detail"

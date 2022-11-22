@@ -1,6 +1,7 @@
 @extends('layouts.layout')
 @section('title', 'attendance')
 @section('content')
+    @include('components.sider')
     <div class="container my-2">
         <div class="row">
             <div class="col d-flex justify-content-between align-items-end">

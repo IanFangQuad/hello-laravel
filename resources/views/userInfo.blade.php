@@ -1,6 +1,7 @@
 @extends('layouts.layout')
 @section('title', 'userinfo')
 @section('content')
+    @include('components.sider')
     <div class="container my-5">
         <h3 class="h3">user info</h3>
         <div class="mb-3">

@@ -26,7 +26,6 @@
 
 <body>
 
-    @include('components.sider')
     @include('components.header')
     @yield('content')
 

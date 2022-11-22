@@ -85,10 +85,15 @@ class PunchService
         foreach ($leaves as $date => $events) {
             $events = $events->filter(function ($leave) use ($member_id) {
                 return $leave->member_id == $member_id;
-            });
+            })->values();
+
+            if ($events->isEmpty()) {
+                unset($leaves[$date]);
+                continue;
+            }
+
             $leaves[$date] = $events;
         }
-        $leaves = $leaves->filter();
 
         $range = [];
         $period = $start->copy()->daysUntil($end->copy()->format('Y-m-d'));
