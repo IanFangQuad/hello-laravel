@@ -116,7 +116,7 @@ class PunchService
 
             if (!$records->has($date)) { // the day doesn't have record, its status default to absent
 
-                $status = $isToday ? 'remember to punch in' : 'absent';
+                $status = 'absent';
                 $stuff = collect();
 
                 if ($leaves->has($date)) { // but that day have leave
@@ -132,6 +132,8 @@ class PunchService
                         $status = $isApproved ? 'half day absent' : 'leave reviewing, but still have half day absent';
                     }
                 }
+
+                $status = $isToday ? 'remember to punch in' : $status;
 
                 $stuff->status = $status;
                 $stuff->start_time = '';
