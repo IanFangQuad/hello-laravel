@@ -105,3 +105,7 @@
 .today.calendar-cell:not(.calendar-title):hover {
     background-color: rgba(139, 231, 33, 0.1);
 }
+
+#usage-block{
+    display: none;
+}

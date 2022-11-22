@@ -218,7 +218,7 @@
                             <input class="form-control need-calc" type="text" name="description" id="description"
                                 value="{{ old('description') }}">
                         </div>
-                        <div id="usage-block" class="d-flex row">
+                        <div id="usage-block" class="row">
                             <div class="col">
                                 <label for="usage" class="form-label">usage</label>
                                 <div class="d-flex align-items-center">
@@ -443,6 +443,7 @@
                 toEditMode();
                 $("#start-date").show();
                 $("#start-from").hide();
+                $("#usage-block").addClass('d-flex');
             });
         });
 
@@ -452,7 +453,7 @@
             $("#start-date").hide();
             $("#btn-edit").hide();
             $("#btn-submit").show();
-            $("#usage-block").hide();
+            $("#usage-block").removeClass('d-flex');
             $(".required").show();
             $("#form-data input").prop('readonly', false);
             $("#form-data select").prop('disabled', false);
@@ -464,7 +465,7 @@
             $("#start-date").show();
             $("#btn-edit").show();
             $("#btn-submit").hide();
-            $("#usage-block").show();
+            $("#usage-block").addClass('d-flex');
             $(".required").hide();
             $("#form-data input").prop('readonly', true);
             $("#form-data select").prop('disabled', true);
