@@ -32,17 +32,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('user/{id}', 'show');
     });
 
-    Route::middleware(['can:review_leaves'])->group(function () {
-        Route::controller(LeaveController::class)->group(function () {
-            Route::patch('leave/approve/{id}', 'approve');
-        });
-    });
-
     Route::controller(LeaveController::class)->group(function () {
         Route::get('leave', 'show');
         Route::post('leave', 'store');
         Route::delete('leave/{id}', 'destroy');
         Route::patch('leave/{id}', 'update');
+        Route::patch('leave/approve/{id}', 'approve');
     });
 
 

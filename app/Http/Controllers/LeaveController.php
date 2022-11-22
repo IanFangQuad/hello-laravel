@@ -75,6 +75,8 @@ class LeaveController extends Controller
 
     public function approve(Request $request, $id)
     {
+        $this->authorize('review_leaves');
+
         $formData = ['approval' => 1];
 
         $status = $this->LeaveRepository->update($id, $formData);
