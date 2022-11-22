@@ -126,13 +126,14 @@ class PunchService
 
                     $start = Carbon::parse($leaves[$date][0]->start);
                     $end = Carbon::parse($leaves[$date][0]->end);
-                    $isEndDateOfLeave = ($end->copy()->format('Y-m-d') == $date);
+                    // if the date is ends of leave, it could be a half day leave that not allow to have no record
+                    $isEndsDateOfLeave = ($end->copy()->format('Y-m-d') == $date || $start->copy()->format('Y-m-d') == $date);
 
-                    $usage = $isEndDateOfLeave ? $start->copy()->setMonth(1)->setDay(1)->diffInHours($end->copy()->setMonth(1)->setDay(1)) : 9;
+                    $usage = $isEndsDateOfLeave ? $start->copy()->setMonth(1)->setDay(1)->diffInHours($end->copy()->setMonth(1)->setDay(1)) : 9;
                     $isAllDayLeave = ($usage == 9);
 
-                    if ($isEndDateOfLeave && !$isAllDayLeave) {
-                        $status = $isApproved ? 'half day absent' : 'leave reviewing, but still have half day absent';
+                    if ($isEndsDateOfLeave && !$isAllDayLeave) {
+                        $status = $isApproved ? 'half day ' . $type . ' leave, half day absent' : 'leave reviewing, but still have half day absent';
                     }
                 }
 
