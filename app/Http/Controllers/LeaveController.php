@@ -10,9 +10,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use \App\Exceptions\PostException;
 use \App\Http\Requests\LeavePostRequest;
 use \App\Repositories\LeaveRepository;
-use \App\Exceptions\PostException;
 use \App\Services\CalendarService;
 
 class LeaveController extends Controller
@@ -33,10 +33,12 @@ class LeaveController extends Controller
         $email = Auth::user()->email;
         $id = Auth::user()->id;
 
+        $canReview = ($request->user()->can('review_leaves'));
+
         $dateParms = $request->query();
         $calendar = $this->CalendarService->getSchedules($dateParms);
 
-        return view('leave', ['name' => $userName, 'id' => $id, 'email' => $email, 'calendar' => $calendar]);
+        return view('leave', ['name' => $userName, 'id' => $id, 'calendar' => $calendar, 'canReview' => $canReview]);
     }
 
     public function store(LeavePostRequest $request)
@@ -69,6 +71,17 @@ class LeaveController extends Controller
         throw_if(!$status, new PostException);
 
         return redirect()->back()->with('msg', 'update success');
+    }
+
+    public function approve(Request $request, $id)
+    {
+        $formData = ['approval' => 1];
+
+        $status = $this->LeaveRepository->update($id, $formData);
+
+        throw_if(!$status, new PostException);
+
+        return redirect()->back()->with('msg', 'this leave has been approved');
     }
 
 }

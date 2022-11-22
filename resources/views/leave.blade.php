@@ -80,7 +80,7 @@
                                             </div>
                                             <div class="col p-0 mx-1">{{ $event['description'] }}</div>
                                             <div class="tag-tool my-1">
-                                                <span class="material-symbols-outlined mx-1 btn-detail"
+                                                <span title="information" class="material-symbols-outlined mx-1 btn-detail"
                                                     data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
                                                     data-end="{{ $event['end'] }}" data-type="{{ $event['type']->key }}"
                                                     data-approval="{{ $event['approval'] }}"
@@ -97,15 +97,29 @@
                                                     @php
                                                         $isAuthor = $id == $event['member']['id'];
                                                     @endphp
-                                                    <span @class([
+                                                    <span title="delete" @class([
                                                         'material-symbols-outlined',
                                                         'mx-1',
                                                         'btn-delete',
                                                         'd-none' => !$isAuthor,
-                                                    ]) data-id="{{ $event['id'] }}">
+                                                    ])
+                                                        data-id="{{ $event['id'] }}">
                                                         delete
                                                     </span>
                                                 </form>
+                                                @if ($canReview && !$event['approval'])
+                                                    <form id="form-approve-{{ $event['id'] }}"
+                                                        action="/leave/approve/{{ $event['id'] }}" method="POST"
+                                                        class="d-flex align-items-center">
+                                                        @method('PATCH')
+                                                        @csrf
+                                                        <span title="approve"
+                                                            class="material-symbols-outlined mx-1 btn-approve"
+                                                            data-id="{{ $event['id'] }}">
+                                                            task_alt
+                                                        </span>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </div>
                                     @endforeach
@@ -200,17 +214,24 @@
                             <input class="form-control need-calc" type="text" name="description" id="description"
                                 value="{{ old('description') }}">
                         </div>
-                        <div class="">
-                            <div id="usage-block">
+                        <div id="usage-block" class="d-flex row">
+                            <div class="col">
                                 <label for="usage" class="form-label">usage</label>
                                 <div class="d-flex align-items-center">
-                                    <input id="usage" type="text" name="usage" class="form-control w-inherit"
+                                    <input id="usage" type="text" name="usage" class="form-control"
                                         value="" disabled>
                                     <span id="time-unit" class="mx-2">days</span>
                                 </div>
                             </div>
-                            <div id="total" class="text-danger text-white">you will use XX days for XX</div>
+                            <div class="col">
+                                <label for="approve" class="form-label">approval</label>
+                                <div class="d-flex align-items-center">
+                                    <input id="approve" type="text" name="approve" class="form-control"
+                                        value="" disabled>
+                                </div>
+                            </div>
                         </div>
+                        <div id="total" class="text-danger text-white mt-1">you will use XX days for XX</div>
                         <div class="col d-flex justify-content-between">
                             <div>
                                 <div class="col text-danger" id="error-msg">
@@ -365,15 +386,34 @@
                 const checkBtn =
                     `<button id="btn-delete-check" type="button" class="btn btn-danger" data-id="${id}">Check</button>`;
                 $("#modal .modal-footer #btn-delete-check").remove();
+                $("#modal .modal-footer #btn-approve-check").remove();
                 $("#modal .modal-footer").prepend(checkBtn);
 
                 $("#modal-body").empty().text('going to delete this event?');
                 modalMsg('modal', 'modal-body', '');
             });
 
+            $(".btn-approve").on("click", function() {
+                const id = $(this).data('id');
+
+                const checkBtn =
+                    `<button id="btn-approve-check" type="button" class="btn btn-danger" data-id="${id}">Check</button>`;
+                $("#modal .modal-footer #btn-delete-check").remove();
+                $("#modal .modal-footer #btn-approve-check").remove();
+                $("#modal .modal-footer").prepend(checkBtn);
+
+                $("#modal-body").empty().text('going to approve this leave?');
+                modalMsg('modal', 'modal-body', '');
+            });
+
             $("#modal").on("click", "#btn-delete-check", function() {
                 const id = $(this).data('id');
                 $(`#form-delete-${id}`).submit();
+            });
+
+            $("#modal").on("click", "#btn-approve-check", function() {
+                const id = $(this).data('id');
+                $(`#form-approve-${id}`).submit();
             });
 
             $(".btn-detail").on("click", function() {
@@ -444,6 +484,9 @@
 
             const days = (data.hours) / 24;
             $("#usage").val(days);
+
+            const approve = (data.approval) ? 'approved' : 'reviewing';
+            $("#approve").val(approve);
         }
 
         function resetValue() {
