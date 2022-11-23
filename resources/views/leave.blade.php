@@ -385,6 +385,11 @@
 
                 }
 
+                if(leaveCount == 0){
+                    $("#total").text('can not put entire leave in dayoff').removeClass('text-white');
+                    return;
+                }
+
                 let unit = (leaveCount > 1) ? 'days' : 'day';
                 let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
                 $("#total").html(msg).removeClass('text-white');
