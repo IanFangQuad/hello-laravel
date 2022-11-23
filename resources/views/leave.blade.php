@@ -1,4 +1,7 @@
 @extends('layouts.layout')
+@section('css')
+    <link rel="stylesheet" href="/css/calendar.css">
+@endsection
 @section('title', 'leave')
 @section('content')
     @include('components.sider')

@@ -1,4 +1,7 @@
 @extends('layouts.layout')
+@section('css')
+    <link rel="stylesheet" href="/css/punchTime.css">
+@endsection
 @section('title', 'index')
 @section('content')
     @include('components.sider')

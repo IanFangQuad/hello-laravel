@@ -16,9 +16,8 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Mono&text=0123456789">
-    <link rel="stylesheet" href="/css/calendar.css">
     <link rel="stylesheet" href="/css/index.css">
-    <link rel="stylesheet" href="/css/punchTime.css">
+    @yield('css')
     <title>
         @yield('title')
     </title>
