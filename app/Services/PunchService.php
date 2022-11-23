@@ -117,11 +117,11 @@ class PunchService
         foreach ($range as $date) {
 
             $isToday = ($date == Carbon::now()->format('Y-m-d'));
-            $status = $isToday ? 'remember to punch in' : '';
+            $status = '';
 
             if (!$records->has($date)) { // the day doesn't have record, its status default to absent
 
-                $status = 'absent';
+                $status = $isToday ? 'remember to punch in' : 'absent';
                 $stuff = collect();
 
                 if ($leaves->has($date)) { // but that day have leave
