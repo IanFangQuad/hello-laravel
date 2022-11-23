@@ -10,6 +10,6 @@ class PostException extends Exception
 
     public function render(Request $request)
     {
-        return redirect()->back()->with('msg', 'action fail, please try again');
+        return redirect()->back()->withErrors(['msg' => 'action fail, please try again']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
 use \App\Exceptions\PostException;
 use \App\Helper\Helper;
@@ -25,16 +26,24 @@ class PunchService
 
     public function punchin($parms)
     {
-        $status = $this->AttendanceRepository->create($parms);
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->AttendanceRepository->create($parms);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'punch in success');
     }
 
     public function punchout($parms, $id)
     {
-        $status = $this->AttendanceRepository->update($id, $parms);
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->AttendanceRepository->update($id, $parms);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'punch out success');
     }

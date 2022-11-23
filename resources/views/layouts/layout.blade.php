@@ -39,7 +39,12 @@
                 </div>
                 <div class="modal-body" id="modal-body">
                     @if (Session::has('msg'))
-                        {{ Session::get('msg') }}
+                        <div id="msg-success">{{ Session::get('msg') }}</div>
+                    @endif
+                    @if ($errors->has('msg'))
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}
+                        @endforeach
                     @endif
                 </div>
                 <div class="modal-footer">

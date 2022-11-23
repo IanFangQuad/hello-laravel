@@ -242,7 +242,7 @@
                         <div class="col d-flex justify-content-between">
                             <div>
                                 <div class="col text-danger" id="error-msg">
-                                    @if ($errors->any())
+                                    @if ($errors->any() && !$errors->has('msg'))
                                         <ul class="list-unstyled border border-2 border-danger rounded p-1 my-1">
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
@@ -252,6 +252,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input id="oldid" type="text" name="oldid" class="form-control d-none" value="{{ old('oldid') }}">
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="btn-edit" class="btn btn-primary">edit</button>
@@ -281,6 +282,9 @@
                 $("#modal-title").text('Event detail');
                 $("#start-date").show();
                 $("#start-from").hide();
+                const id = $("#oldid").val()
+                $("#form-data").attr('action', `/leave/${id}`);
+                $("#method").val('PATCH');
             }
 
             $(".calendar-add").on("click", function() {
@@ -495,6 +499,9 @@
 
             const approve = (data.approval) ? 'approved' : 'reviewing';
             $("#approve").val(approve);
+
+            const id = data.id;
+            $("#oldid").val(id);
         }
 
         function resetValue() {

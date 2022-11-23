@@ -25,7 +25,7 @@
             <div class="col d-flex justify-content-between">
                 <div>
                     <div class="col text-danger" id="error-msg">
-                        @if ($errors->any())
+                        @if ($errors->any() && !$errors->has('msg'))
                             <ul class="list-unstyled">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -47,7 +47,8 @@
 @section('script')
     <script>
         $(function() {
-            modalMsg('modal', 'modal-body', '/login');
+            let redirect = $("#msg-success").text().trim() ? '/login' : '';
+            modalMsg('modal', 'modal-body', redirect);
         });
     </script>
 @endsection

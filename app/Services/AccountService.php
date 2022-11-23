@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use \App\Exceptions\PostException;
 use \App\Repositories\MemberRepository;
 
 class AccountService
@@ -29,10 +31,11 @@ class AccountService
 
     public function register($formData)
     {
-        $status = $this->MemberRepository->create($formData);
-
-        if (!$status) {
-            throw ValidationException::withMessages(['register fail, please try again']);
+        try {
+            $status = $this->MemberRepository->create($formData);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
         }
 
         return redirect()->back()->with('msg', 'register success');

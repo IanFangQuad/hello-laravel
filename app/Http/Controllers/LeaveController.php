@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \App\Exceptions\PostException;
@@ -46,29 +47,38 @@ class LeaveController extends Controller
 
         $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
 
-        $status = $this->LeaveRepository->create($formData);
-
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->LeaveRepository->create($formData);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'add success');
     }
 
     public function destroy(Request $request, $id)
     {
-        $status = $this->LeaveRepository->delete($id);
-
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->LeaveRepository->delete($id);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'delete success');
     }
 
     public function update(LeavePostRequest $request, $id)
     {
-        $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours', 'approval']);
+        $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours']);
 
-        $status = $this->LeaveRepository->update($id, $formData);
-
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->LeaveRepository->update($id, $formData);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'update success');
     }
@@ -79,9 +89,12 @@ class LeaveController extends Controller
 
         $formData = ['approval' => 1];
 
-        $status = $this->LeaveRepository->update($id, $formData);
-
-        throw_if(!$status, new PostException);
+        try {
+            $status = $this->LeaveRepository->update($id, $formData);
+            throw_if(!$status, new PostException);
+        } catch (QueryException $e) {
+            throw new PostException;
+        }
 
         return redirect()->back()->with('msg', 'this leave has been approved');
     }
