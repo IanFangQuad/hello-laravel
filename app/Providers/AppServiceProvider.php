@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Gate::define('review_leaves', [LeavePolicy::class, 'review']);
+		Gate::define('review_leaves', [LeavePolicy::class, 'review']);
+        Gate::define('update_leave', [LeavePolicy::class, 'update']);
+        Gate::define('delete_leave', [LeavePolicy::class, 'delete']);
     }
 }

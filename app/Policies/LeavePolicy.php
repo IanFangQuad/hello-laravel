@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Leave;
 use App\Models\Member;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -9,11 +10,10 @@ class LeavePolicy
 {
     use HandlesAuthorization;
 
-    public function review(Member $member)
+	public function review(Member $member)
     {
         return ($member->type == 'admin');
     }
-
     /**
      * Determine whether the user can view any models.
      *
@@ -29,10 +29,10 @@ class LeavePolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\Member  $member
-     * @param  \App\Models\Member  $member
+     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(Member $member)
+    public function view(Member $member, Leave $leave)
     {
         //
     }
@@ -52,34 +52,34 @@ class LeavePolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\Member  $member
-     * @param  \App\Models\Member  $member
+     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(Member $member)
+    public function update(Member $member, Leave $leave)
     {
-        //
+        return $member->id === $leave->member_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\Member  $member
-     * @param  \App\Models\Member  $member
+     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(Member $member)
+    public function delete(Member $member, Leave $leave)
     {
-        //
+        return $member->id === $leave->member_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\Member  $member
-     * @param  \App\Models\Member  $member
+     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(Member $member)
+    public function restore(Member $member, Leave $leave)
     {
         //
     }
@@ -88,10 +88,10 @@ class LeavePolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\Member  $member
-     * @param  \App\Models\Member  $member
+     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(Member $member)
+    public function forceDelete(Member $member, Leave $leave)
     {
         //
     }

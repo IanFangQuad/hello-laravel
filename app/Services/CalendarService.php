@@ -19,7 +19,7 @@ class CalendarService
         $this->HolidayRepository = $holidayRepository;
     }
 
-    public function getSchedules($parms): array
+    public function getSchedules(array $parms): array
     {
         $year = isset($parms['y']) ? $parms['y'] : Carbon::now()->format('Y');
         $month = isset($parms['m']) ? $parms['m'] : Carbon::now()->format('m');
@@ -31,7 +31,7 @@ class CalendarService
         $start = Carbon::parse($year)->firstOfYear()->format('Y-m-d');
         $end = Carbon::parse($year)->add(1, 'year')->lastOfYear()->format('Y-m-d');
 
-        $holidays = $this->HolidayRepository->getByPeriod($start, $end)->keyBy('date');
+        $holidays = $this->HolidayRepository->getDayoffByPeriod($start, $end)->keyBy('date');
         $hasTargetSchedule = $this->checkSchedule($year, $holidays);
         $holidays = $hasTargetSchedule ? $holidays : collect();
 
@@ -45,6 +45,54 @@ class CalendarService
         ];
 
         return $calendar;
+    }
+
+    public function countHours(string $stratDatetime, string $endDateTime): int
+    {
+        $today = Carbon::now()->format('Y-m-d');
+        $startTime = Carbon::parse($stratDatetime)->format('H:i:s');
+        $endTime = Carbon::parse($endDateTime)->format('H:i:s');
+
+        $holidays = $this->HolidayRepository->getDayoffByPeriod($stratDatetime, $endDateTime)->keyBy('date');
+
+        $range = [];
+        $period = Carbon::parse($stratDatetime)->daysUntil($endDateTime);
+
+        foreach ($period as $date) {
+            $date = $date->format('Y-m-d');
+            if (!$holidays->has($date)) {
+                array_push($range, $date);
+            }
+        }
+        $afternoon = Carbon::parse($today . ' ' . '13:00:00');
+        $startTime = Carbon::parse($today . ' ' . $startTime);
+        $endTime = Carbon::parse($today . ' ' . $endTime);
+        $days = 0;
+        $lastIndex = (count($range)) - 1;
+
+        foreach ($range as $index => $date) {
+
+            if ($index == $lastIndex) {
+                if ($startTime->copy()->format('H:i:s') == $endTime->copy()->format('H:i:s') && $endTime->copy()->format('H:i:s') == '09:00:00') {
+                    $days += 0;
+                    continue;
+                }
+                $isEndAfternoon = ($afternoon->copy()->diffInHours($endTime->copy(), false)) > 0;
+                $days += $isEndAfternoon ? 1 : 0.5;
+                continue;
+            }
+
+            if ($index == 0) {
+                $isStartFromMorning = ($afternoon->copy()->diffInHours($startTime->copy(), false)) < 0;
+
+                $days += $isStartFromMorning ? 1 : 0.5;
+                continue;
+            }
+
+            $days += 1;
+        }
+
+        return $days * 24;
     }
 
     private function attachLeaves(CarbonPeriod $period, Collection $holidays): array
@@ -85,7 +133,7 @@ class CalendarService
         return $rearrange;
     }
 
-    private function checkSchedule($targetYear, Collection $holidays): bool
+    private function checkSchedule(string $targetYear, Collection $holidays): bool
     {
         $hasTargetSchedule = false;
 

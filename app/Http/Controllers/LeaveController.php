@@ -59,6 +59,9 @@ class LeaveController extends Controller
 
     public function destroy(Request $request, $id)
     {
+		$leave = $this->LeaveRepository->getById($id);
+        $this->authorize('delete_leave', $leave);
+
         try {
             $status = $this->LeaveRepository->delete($id);
             throw_if(!$status, new PostException);
@@ -71,6 +74,9 @@ class LeaveController extends Controller
 
     public function update(LeavePostRequest $request, $id)
     {
+		$leave = $this->LeaveRepository->getById($id);
+        $this->authorize('update_leave', $leave);
+
         $formData = $request->safe()->only(['member_id', 'type', 'start', 'end', 'description', 'hours']);
 
         try {
