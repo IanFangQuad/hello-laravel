@@ -107,10 +107,7 @@ class PunchService
         $range = [];
         $period = $start->copy()->daysUntil($end->copy()->format('Y-m-d'));
 
-        $holidays = $this->HolidayRepository->getByPeriod($start, $end)->keyBy('date');
-        $holidays = $holidays->filter(function ($value) {
-            return $value->dayoff;
-        });
+        $holidays = $this->HolidayRepository->getDayoffByPeriod($start, $end)->keyBy('date');
 
         foreach ($period as $day) {
             $isPast = (Carbon::now()->StartOfDay()->diffInDays($day, false) <= 0);

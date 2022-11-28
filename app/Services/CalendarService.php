@@ -31,7 +31,7 @@ class CalendarService
         $start = Carbon::parse($year)->firstOfYear()->format('Y-m-d');
         $end = Carbon::parse($year)->add(1, 'year')->lastOfYear()->format('Y-m-d');
 
-        $holidays = $this->HolidayRepository->getDayoffByPeriod($start, $end)->keyBy('date');
+        $holidays = $this->HolidayRepository->getByPeriod($start, $end)->keyBy('date');
         $hasTargetSchedule = $this->checkSchedule($year, $holidays);
         $holidays = $hasTargetSchedule ? $holidays : collect();
 

@@ -15,14 +15,14 @@
         <div class="row my-3">
             <div class="col-12 my-2 fw-bold d-flex align-items-center">
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar['query']->copy()->subMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->subMonths(1)->format('m') }}">
+                    href="/leave?y={{ $calendar['query']->copy()->subMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->subMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_left
                     </span>
                 </a>
                 <h3 class="m-0">{{ $calendar['query']->copy()->format('Y / m F') }}</h3>
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar['query']->copy()->addMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->addMonths(1)->format('m') }}">
+                    href="/leave?y={{ $calendar['query']->copy()->addMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->addMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_right
                     </span>
