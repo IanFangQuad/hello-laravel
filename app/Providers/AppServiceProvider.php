@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Policies\LeavePolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Gate::define('update_leave', [LeavePolicy::class, 'update']);
+        Gate::define('delete_leave', [LeavePolicy::class, 'delete']);
     }
 }
