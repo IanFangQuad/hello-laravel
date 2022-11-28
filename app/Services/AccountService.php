@@ -16,7 +16,7 @@ class AccountService
         $this->MemberRepository = $memberRepository;
     }
 
-    public function login($credentials)
+    public function login(array $credentials)
     {
         $status = Auth::attempt($credentials);
 
@@ -27,7 +27,7 @@ class AccountService
         return redirect('/');
     }
 
-    public function register($formData)
+    public function register(array $formData)
     {
         $status = $this->MemberRepository->create($formData);
 

@@ -14,17 +14,22 @@ class LeaveRepository
         return $result;
     }
 
-    public function getByPeriod($start, $end)
+    public function getById(int $id)
+    {
+        return Leave::find($id);
+    }
+
+    public function getByPeriod(string $start, string $end)
     {
         return Leave::with('member')->where('start', '>=', $start)->where('start', '<=', $end)->get();
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         return Leave::find($id)->delete();
     }
 
-    public function update($id, array $params)
+    public function update(int $id, array $params)
     {
         return Leave::find($id)->update($params);
     }

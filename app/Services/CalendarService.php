@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use \App\Repositories\HolidayRepository;
 use \App\Repositories\LeaveRepository;
+use \App\Enums\LeaveType;
 
 class CalendarService
 {
@@ -18,7 +19,7 @@ class CalendarService
         $this->HolidayRepository = $holidayRepository;
     }
 
-    public function getSchedules($parms): Collection
+    public function getSchedules(array $parms): array
     {
         $year = isset($parms['y']) ? $parms['y'] : Carbon::now()->format('Y');
         $month = isset($parms['m']) ? $parms['m'] : Carbon::now()->format('m');
@@ -27,86 +28,112 @@ class CalendarService
         $startOfMonth = $target->copy()->firstOfMonth()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d');
         $endOfMonth = $target->copy()->lastOfMonth()->endOfWeek(Carbon::SATURDAY)->format('Y-m-d');
         // get holidays for front client calculate leave hours
-        $start = Carbon::parse("{$year}-01-01")->firstOfYear()->format('Y-m-d');
+        $start = Carbon::parse($year)->firstOfYear()->format('Y-m-d');
         $end = Carbon::parse($year)->add(1, 'year')->lastOfYear()->format('Y-m-d');
 
-        // $holidays = $this->HolidayRepository->getByPeriod($start, $end)->toArray();
-        $holidays = $this->HolidayRepository->getByPeriod($start, $end)->keyBy('date');
+        $holidays = $this->HolidayRepository->getDayoffByPeriod($start, $end)->keyBy('date');
         $hasTargetSchedule = $this->checkSchedule($year, $holidays);
         $holidays = $hasTargetSchedule ? $holidays : collect();
 
         $period = Carbon::parse($startOfMonth)->daysUntil($endOfMonth);
-        $period = $this->attachProps($period);
-        $period = $this->attachHolidays($period, $holidays);
-        $period = $this->attachLeaves($period);
+        $period = $this->attachLeaves($period, $holidays);
 
-        $calendar = collect([
+        $calendar = [
             'query' => $target,
             'dates' => $period,
             'holidays' => $holidays,
-        ]);
+        ];
 
         return $calendar;
     }
 
-    private function attachProps(CarbonPeriod $period): Collection
+    public function countHours(string $stratDatetime, string $endDateTime): int
     {
-        $rearrange = collect();
+        $today = Carbon::now()->format('Y-m-d');
+        $startTime = Carbon::parse($stratDatetime)->format('H:i:s');
+        $endTime = Carbon::parse($endDateTime)->format('H:i:s');
 
-        foreach ($period as $index => $date) {
+        $holidays = $this->HolidayRepository->getDayoffByPeriod($stratDatetime, $endDateTime)->keyBy('date');
 
-            $rearrange->push((object) [
-                'date' => $date,
-                'dayoff' => false,
-                'annotation' => '',
-            ]);
+        $range = [];
+        $period = Carbon::parse($stratDatetime)->daysUntil($endDateTime);
+
+        foreach ($period as $date) {
+            $date = $date->format('Y-m-d');
+            if (!$holidays->has($date)) {
+                array_push($range, $date);
+            }
         }
+        $afternoon = Carbon::parse($today . ' ' . '13:00:00');
+        $startTime = Carbon::parse($today . ' ' . $startTime);
+        $endTime = Carbon::parse($today . ' ' . $endTime);
+        $days = 0;
+        $lastIndex = (count($range)) - 1;
 
-        return $rearrange;
-    }
+        foreach ($range as $index => $date) {
 
-    private function attachHolidays(Collection $period, Collection $holidays): Collection
-    {
-        foreach ($period as $index => $date) {
-
-            $dateString = $date->date->format('Y-m-d');
-
-            if ($holidays->has($dateString)) {
-                $dayoff = ($holidays->get($dateString)->dayoff == 1) ? true : false;
-                $annotation = $holidays->get($dateString)->annotation;
-                $period->get($index)->dayoff = $dayoff;
-                $period->get($index)->annotation = $annotation;
+            if ($index == $lastIndex) {
+                if ($startTime->copy()->format('H:i:s') == $endTime->copy()->format('H:i:s') && $endTime->copy()->format('H:i:s') == '09:00:00') {
+                    $days += 0;
+                    continue;
+                }
+                $isEndAfternoon = ($afternoon->copy()->diffInHours($endTime->copy(), false)) > 0;
+                $days += $isEndAfternoon ? 1 : 0.5;
+                continue;
             }
 
+            if ($index == 0) {
+                $isStartFromMorning = ($afternoon->copy()->diffInHours($startTime->copy(), false)) < 0;
+
+                $days += $isStartFromMorning ? 1 : 0.5;
+                continue;
+            }
+
+            $days += 1;
         }
-        return $period;
+
+        return $days * 24;
     }
 
-    private function attachLeaves(Collection $period): Collection
+    private function attachLeaves(CarbonPeriod $period, Collection $holidays): array
     {
-        $startOfMonth = $period->first()->date->format('Y-m-d');
-        $endOfMonth = $period->last()->date->format('Y-m-d');
 
+        $rearrange = [];
+
+        $startOfMonth = $period->startDate->format('Y-m-d');
+        $endOfMonth = $period->endDate->format('Y-m-d');
         $leaves = $this->LeaveRepository->getByPeriod($startOfMonth, $endOfMonth);
         $leaves = $this->leavesBydates($leaves);
 
         foreach ($period as $index => $date) {
 
-            $dateString = $date->date->format('Y-m-d');
+            $dateString = $date->format('Y-m-d');
+            $dayoff = false;
+            $annotation = '';
 
-            if (!$leaves->has($dateString) || $date->dayoff) {
-                $period->get($index)->events = collect();
-                continue;
+            if ($holidays->has($dateString)) {
+                $dayoff = ($holidays->get($dateString)->dayoff == 1) ? true : false;
+                $annotation = $holidays->get($dateString)->annotation;
             }
 
-            $period->get($index)->events = $leaves->get($dateString);
+            $events = [];
 
+            if ($leaves->has($dateString) && !$dayoff) {
+                $events = $leaves->get($dateString);
+            }
+
+            $rearrange[] = [
+                'date' => $date,
+                'dayoff' => $dayoff,
+                'annotation' => $annotation,
+                'events' => $events,
+            ];
         }
 
-        return $period;
+        return $rearrange;
     }
 
-    private function checkSchedule($targetYear, Collection $holidays): bool
+    private function checkSchedule(string $targetYear, Collection $holidays): bool
     {
         $hasTargetSchedule = false;
 
@@ -126,23 +153,22 @@ class CalendarService
         $leavesReform = collect();
 
         foreach ($leaves as $leave) {
+            $leave->type = LeaveType::fromKey($leave->type);
             $start = $leave->start;
             $end = $leave->end;
 
             // to create time range of this leave
             // ex: start = '2022-01-01' end = '2022-01-03' get  $periods = collect(['2022-01-01','2022-01-02','2022-01-03'])
-            $periods = collect();
+
             $range = Carbon::parse($start)->daysUntil($end);
 
             foreach ($range as $date) {
-                $periods->push($date->format('Y-m-d'));
-            }
+                $dateString = $date->format('Y-m-d');
 
-            foreach ($periods as $date) {
-                if (!$leavesReform->has($date)) {
-                    $leavesReform->put($date, collect()->push($leave));
+                if (!$leavesReform->has($dateString)) {
+                    $leavesReform->put($dateString, collect()->push($leave));
                 } else {
-                    $leavesReform->get($date)->push($leave);
+                    $leavesReform->get($dateString)->push($leave);
                 }
             }
         }

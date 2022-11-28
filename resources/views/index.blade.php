@@ -6,7 +6,8 @@
             <div class="col d-flex justify-content-between align-items-end">
                 <h2 class="m-0">index</h2>
                 <div class="d-flex align-items-end">
-                    <span class="mx-1">hello, <a href="/user/{{ $id }}">{{ $name }}</a></span>
+                    <span class="mx-1" id="user" data-id="{{ $id }}">hello, <a
+                            href="/user/{{ $id }}">{{ $name }}</a></span>
                     <form action="/logout" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-sm" id="btn-logout">log out</button>
@@ -18,14 +19,14 @@
         <div class="row my-3">
             <div class="col-12 my-2 fw-bold d-flex align-items-center">
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar->get('query')->copy()->subMonths(1)->format('Y') }}&m={{ $calendar->get('query')->copy()->subMonths(1)->format('m') }}">
+                    href="/?y={{ $calendar['query']->copy()->subMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->subMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_left
                     </span>
                 </a>
-                <h3 class="m-0">{{ $calendar->get('query')->copy()->format('Y / m F') }}</h3>
+                <h3 class="m-0">{{ $calendar['query']->copy()->format('Y / m F') }}</h3>
                 <a class="text-decoration-none mx-1 d-flex align-items-center"
-                    href="/?y={{ $calendar->get('query')->copy()->addMonths(1)->format('Y') }}&m={{ $calendar->get('query')->copy()->addMonths(1)->format('m') }}">
+                    href="/?y={{ $calendar['query']->copy()->addMonths(1)->format('Y') }}&m={{ $calendar['query']->copy()->addMonths(1)->format('m') }}">
                     <span class="material-symbols-outlined fs-2">
                         chevron_right
                     </span>
@@ -40,16 +41,16 @@
                     <div class="calendar-cell calendar-title">Thursday</div>
                     <div class="calendar-cell calendar-title">Friday</div>
                     <div class="calendar-cell calendar-title">Saturday</div>
-                    @if ($calendar->get('holidays')->isEmpty())
+                    @if ($calendar['holidays']->isEmpty())
                         <div class="col-12 p-5 d-felx align-items-center justify-content-center text-center fs-2">The
                             schedule of year you
                             pick is not ready yet</div>
                     @else
-                        @foreach ($calendar->get('dates') as $date)
+                        @foreach ($calendar['dates'] as $date)
                             @php
-                                $isCurrnetMonth = $date->date->format('m') == $calendar->get('query')->format('m');
-                                $isTextRed = $date->dayoff;
-                                $isToday = ($date->date->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d'));
+                                $isCurrnetMonth = $date['date']->format('m') == $calendar['query']->format('m');
+                                $isTextRed = $date['dayoff'];
+                                $isToday = $date['date']->format('Y-m-d') == Illuminate\Support\Carbon::now()->format('Y-m-d');
                             @endphp
                             <div @class([
                                 'calendar-cell',
@@ -59,9 +60,9 @@
                                 'text-danger' => $isTextRed,
                                 'grayscale' => !$isCurrnetMonth,
                                 'today' => $isToday,
-                            ]) data-date="{{ $date->date->format('Y-m-d') }}">
+                            ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                 <div class="row w-100">
-                                    <div class="col-auto">{{ $date->date->format('d') }}</div>
+                                    <div class="col-auto">{{ $date['date']->format('d') }}</div>
                                     <div @class([
                                         'col',
                                         'p-0',
@@ -72,14 +73,15 @@
                                         'calendar-annotation',
                                         'text-danger' => $isTextRed,
                                     ])>
-                                        {{ $date->annotation }}
+                                        {{ $date['annotation'] }}
                                     </div>
                                 </div>
                                 <div class="tag-wrapper">
-                                    @foreach ($date->events as $event)
+                                    @foreach ($date['events'] as $event)
                                         <div class="border border-1 rounded event-tag my-1 mx-2 ">
                                             <div class="d-flex">
-                                                <div class="col-auto p-0 mx-1 fw-bold text-dark">{{ $event['member']['name'] }}</div>
+                                                <div class="col-auto p-0 mx-1 fw-bold text-dark">
+                                                    {{ $event['member']['name'] }}</div>
                                                 <div class="col-auto p-0"><span
                                                         class="badge bg-warning text-dark">{{ $event['type'] }}</span>
                                                 </div>
@@ -88,7 +90,7 @@
                                             <div class="tag-tool my-1">
                                                 <span class="material-symbols-outlined mx-1 btn-detail"
                                                     data-id="{{ $event['id'] }}" data-start="{{ $event['start'] }}"
-                                                    data-end="{{ $event['end'] }}" data-type="{{ $event['type'] }}"
+                                                    data-end="{{ $event['end'] }}" data-type="{{ $event['type']->key }}"
                                                     data-approval="{{ $event['approval'] }}"
                                                     data-hours="{{ $event['hours'] }}"
                                                     data-member="{{ $event['member']['id'] }}"
@@ -100,8 +102,15 @@
                                                     class="d-flex align-items-center">
                                                     @method('DELETE')
                                                     @csrf
-                                                    <span class="material-symbols-outlined mx-1 btn-delete"
-                                                        data-id="{{ $event['id'] }}">
+                                                    @php
+                                                        $isAuthor = $id == $event['member']['id'];
+                                                    @endphp
+                                                    <span @class([
+                                                        'material-symbols-outlined',
+                                                        'mx-1',
+                                                        'btn-delete',
+                                                        'd-none' => !$isAuthor,
+                                                    ]) data-id="{{ $event['id'] }}">
                                                         delete
                                                     </span>
                                                 </form>
@@ -112,15 +121,15 @@
 
                                 @php
                                     $now = Illuminate\Support\Carbon::now();
-                                    $canAdd = $now->diffInDays($date->date, false) >= 0;
-                                    $canAdd = $date->dayoff ? false : $canAdd;
+                                    $canAdd = $now->diffInDays($date['date'], false) >= 0;
+                                    $canAdd = $date['dayoff'] ? false : $canAdd;
                                 @endphp
                                 <span @class([
                                     'material-symbols-outlined',
                                     'calendar-add',
                                     'fs-3',
                                     'd-none' => !$canAdd,
-                                ]) data-date="{{ $date->date->format('Y-m-d') }}">
+                                ]) data-date="{{ $date['date']->format('Y-m-d') }}">
                                     add_circle
                                 </span>
                             </div>
@@ -153,8 +162,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="type" class="form-label"><span class="text-danger required">*</span>Type</label>
-                            <select class="form-control need-calc" name="type" id="type"
-                                value="{{ old('type') }}">
+                            <select class="form-control need-calc" name="type" id="type" value="">
                                 <option value="" disabled selected>選擇假別</option>
                                 <option value="annual">特休</option>
                                 <option value="comp">補休</option>
@@ -175,17 +183,9 @@
                                 <input class="form-control need-calc" type="date" name="start-date"
                                     value="{{ old('start-date') }}" id="start-date">
                                 <select class="form-control ms-2 need-calc" name="start-time" id="start-time"
-                                    value="{{ old('start-time') }}">
+                                    value="">
                                     <option value="09:00:00" selected>09:00</option>
-                                    {{-- <option value="10:00:00">10:00</option>
-                                    <option value="11:00:00">11:00</option>
-                                    <option value="12:00:00">12:00</option>
-                                    <option value="13:00:00">13:00</option> --}}
                                     <option value="14:00:00">14:00</option>
-                                    {{-- <option value="15:00:00">15:00</option>
-                                    <option value="16:00:00">16:00</option>
-                                    <option value="17:00:00">17:00</option>
-                                    <option value="18:00:00">18:00</option> --}}
                                 </select>
                             </div>
                         </div>
@@ -196,16 +196,8 @@
                                 <input class="form-control need-calc" type="date" name="end-date"
                                     value="{{ old('end-date') }}" id="end-date">
                                 <select class="form-control ms-2 need-calc" name="end-time" id="end-time"
-                                    value="{{ old('end-time') }}">
-                                    {{-- <option value="09:00:00">09:00</option>
-                                    <option value="10:00:00">10:00</option>
-                                    <option value="11:00:00">11:00</option>
-                                    <option value="12:00:00">12:00</option> --}}
+                                    value="">
                                     <option value="13:00:00">13:00</option>
-                                    {{-- <option value="14:00:00">14:00</option>
-                                    <option value="15:00:00">15:00</option>
-                                    <option value="16:00:00">16:00</option>
-                                    <option value="17:00:00">17:00</option> --}}
                                     <option value="18:00:00">18:00</option>
                                 </select>
                             </div>
@@ -254,7 +246,7 @@
     </div>
     <!-- form Modal -->
 
-    <div id="data" class="d-none" data-holidays="{{ json_encode($calendar->get('holidays')) }}"></div>
+    <div id="data" class="d-none" data-holidays="{{ json_encode($calendar['holidays']) }}"></div>
 
 @endsection
 @section('script')
@@ -316,22 +308,10 @@
                     return;
                 }
 
-                if (startDate == endDate) {
-                    const afternoon = moment(startDate + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
-                    const isStartFromMorning = (afternoon.diff(startStamp) > 0);
-                    const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
-                    const isLeaveInSameBlock = !(isStartFromMorning && isEndAfterNoon);
-
-                    leaveCount = isLeaveInSameBlock ? 0.5 : 1;
-                    let unit = 'day';
-                    let msg = `you will use <b>${leaveCount} ${unit}</b> for <b>${type} leave</b>`;
-                    $("#total").html(msg).removeClass('text-white');
-                    $("#hours").val(leaveCount * 24);
-                    $("#btn-submit").prop('disabled', false);
-                    return;
-                }
-
                 let dayoff = $("#data").data('holidays');
+                dayoff = Object.fromEntries(Object.entries(dayoff).filter(([key, value]) => {
+                    return value.dayoff == 1;
+                }));
 
                 let days = endStamp.diff(startStamp, 'days');
 
@@ -340,13 +320,11 @@
                 for (let i = 0; i <= days; i++) {
                     let clone = startStamp.clone();
                     let date = clone.add(i, 'days').format('YYYY-MM-DD');
-                    clone.subtract(i, 'days');
-                    range.push(date);
+                    if (!(date in dayoff)) {
+                        range.push(date);
+                    }
                 }
 
-                range = range.filter(function(date, index) {
-                    return !(date in dayoff);
-                })
                 let lastIndex = range.length - 1;
 
                 for (let i = 0; i <= lastIndex; i++) {
@@ -356,6 +334,13 @@
                     const afternoon = moment(date + ' 13:00:00', "YYYY-MM-DD hh:mm:ss");
 
                     if (i == 0) {
+
+                        if (lastIndex == 0) {
+                            const isEndAfterNoon = (afternoon.diff(endStamp) < 0);
+                            leaveCount += isEndAfterNoon ? 1 : 0.5;
+                            continue;
+                        }
+
                         const isStartFromMorning = (afternoon.diff(startStamp) > 0);
                         leaveCount += isStartFromMorning ? 1 : 0.5;
                         continue;
@@ -406,6 +391,10 @@
 
                 $("#modal-title").text('Event detail');
                 $("#error-msg").empty();
+
+                const eventOwner = data.member;
+                const currentUser = $("#user").data('id');
+                (currentUser == eventOwner) ? $("#btn-edit").removeClass('d-none') : $("#btn-edit").addClass('d-none');
 
                 filledWithData(data);
                 toReadOnlyMode();
